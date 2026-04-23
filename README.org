@@ -1,0 +1,14 @@
+* Resume
+
+This repo is based on [[https://github.com/aidanscannell/my-org-resume.git][this repo]]. Credits go to the original author,  Aidan Scannell, for the idea and the initial implementation. 
+See [[https://aidanscannell.com/post/org-mode-resume/][here]] for his blogpost.
+
+Besides filling the template with my content and putting it into version control, I have made some adjustments to the original implementation, mostly concerning the layout.
+The ultimate goal is to have a resume that can be easily updated and adapted to different job descriptions, while being machine-readable for LLMs.
+The rough idea is to have a .md file readable for LLMs with a single source of truth regarding the career and educational history which,
+together with a job description can be compiled into an updated resume. 
+A combination of latex and org markdown allows for comfortable editing and machine-readability.
+
+
+
+

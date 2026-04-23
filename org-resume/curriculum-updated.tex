@@ -1,0 +1,243 @@
+% Created 2026-04-23 Thu 09:49
+% Intended LaTeX compiler: pdflatex
+\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
+
+% Change the page layout if you need to
+\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
+
+% Use roboto and lato for fonts
+\renewcommand{\familydefault}{\sfdefault}
+
+% Change the colours if you want to
+\definecolor{SlateGrey}{HTML}{2E2E2E}
+\definecolor{LightGrey}{HTML}{666666}
+\definecolor{DarkPastelRed}{HTML}{450808}
+\definecolor{PastelRed}{HTML}{8F0D0D}
+\definecolor{GoldenEarth}{HTML}{E7D192}
+\colorlet{name}{black}
+\colorlet{tagline}{PastelRed}
+\colorlet{heading}{DarkPastelRed}
+\colorlet{headingrule}{GoldenEarth}
+\colorlet{subheading}{PastelRed}
+\colorlet{accent}{PastelRed}
+\colorlet{emphasis}{SlateGrey}
+\colorlet{body}{LightGrey}
+
+% Change some fonts, if necessary
+\renewcommand{\namefont}{\Huge\rmfamily\bfseries}
+\renewcommand{\personalinfofont}{\footnotesize}
+\renewcommand{\cvsectionfont}{\LARGE\rmfamily\bfseries}
+\renewcommand{\cvsubsectionfont}{\large\bfseries}
+
+% Change the bullets for itemize and rating marker
+% for cvskill if you want to
+\renewcommand{\itemmarker}{{\small\textbullet}}
+\renewcommand{\ratingmarker}{\faCircle}
+
+\usepackage[rm]{roboto}
+\usepackage[defaultsans]{lato}
+\usepackage{paracol}
+\columnratio{0.6} % Set the left/right column width ratio to 6:4.
+\usepackage[bottom]{footmisc}
+\DeclareNameAlias{sortname}{given-family}
+\addbibresource{andy.bib}
+\author{Andreas Loehr}
+\date{\today}
+\title{}
+\begin{document}
+
+\name{Andreas Loehr}
+% \photoR{2.8cm}{aidan_portrait.jpeg}
+\tagline{ML Engineer \& Part-time PhD Student in Reinforcement Learning}
+\personalinfo{
+  \email{andreas.loehr97@gmail.com}
+  \phone{+49 151 27243434}
+  \location{Frankfurt, Germany}
+  \github{anloehr-1097}
+  \linkedin{andreas-loehr-486a52135}
+  \dob{14 October 1997}
+}
+\makecvheader
+\vspace{0.2cm}
+ \begin{quote}
+ Mathematics-driven Software Engineer with focus on Machine Learning and Reinforcement Learning. Experience integrating ML solutions into production systems, building distributed systems, and conducting applied research. Passionate about understanding systems at depth.
+ \end{quote}
+\vspace{0.2cm}
+\begin{paracol}{2}
+\cvsection{Experience}
+\label{sec:orga280c27}
+\cvevent{Software Engineer - Machine Learning}{SimPlan AG}{Nov 2024 -- Ongoing}{Hanau, Germany}
+
+Integrated custom Machine Learning solutions into value stream modeling (VSM) software SimVSM.
+
+\begin{itemize}
+\item Value Stream Digitization: Iterated on ML backend for digitizing analog value streams (c.f. Working Student section). Implemented image preprocessing pipeline to handle large panorama images, refactored backend to use task queues for robustness, and deployed via Docker Compose with Sentry monitoring.
+\item Value Stream Assistant: Built and integrated agentic AI assistant with voice input (Web Speech API), evaluation pipeline. Iterative prototyping for assistant improvements.
+\end{itemize}
+
+\par\divider
+
+\cvevent{Working Student - Software Engineering}{SimPlan AG}{Nov 2022 -- Nov 2024}{ Hanau, Germany}
+
+Implemented ML pipeline for value stream digitization in VSM software.
+
+\begin{itemize}
+\item Built three-step computer vision pipeline: object detection, OCR text detection, and edge detection for digitizing analog value streams (edge detection just integrated, mostly done by our univeristy partner).
+\item Developed custom backend API, conducted data collection and annotation, trained object and text detection models.
+\end{itemize}
+
+\par\divider
+
+\cvevent{Student Worker - Pandemic Modeling Tool}{Goethe-University Frankfurt}{Feb 2022 -- May 2022}{Frankfurt, Germany}
+
+Translated discrete-time epidemic/pandemic modeling tool from Mathematica to Python.
+
+\par\divider
+
+\cvevent{Working Student - Risk Management}{Deloitte Risk Advisory}{June 2019 -- May 2021}{Frankfurt, Germany}
+
+Developed text mining and data analysis tools for financial risk assessment.
+
+\begin{itemize}
+\item Built MS Access/VBA frontend for SQL Server backend (NII stress testing tool): document upload, analysis, simulation validation, and automated report generation with unit and integration tests.
+\item Named Entity Recognition prototype using Transformers; improved duplicate detection via regex and similarity measures; image preprocessing and OCR.
+\end{itemize}
+
+\par\divider
+
+\cvevent{Internship - Risk Management}{Deloitte Risk Advisory}{January 2019 -- March 2019}{Frankfurt, Germany}
+
+Image preprocessing and OCR enhancement for financial documents.
+
+\begin{itemize}
+\item Developed image preprocessing pipeline using OpenCV to improve OCR accuracy on document scans.
+\item Applied techniques: noise reduction, binarization, deskewing; integrated into document analysis workflow.
+\end{itemize}
+
+
+\bigskip
+\cvsection{Projects}
+\label{sec:orgc376da6}
+\cvevent{Real-time Embedded Sensing on ESP32 via ESP-IDF}{Personal Project}{2026}{GitHub}
+
+Low-level embedded C++ application for sensor data collection on microcontroller with FreeRTOS-based architecture.
+
+\begin{itemize}
+\item Task-based concurrency model (WifiConnectTask, Sht3xTask, UpdateTask, TimeSyncTask) with queue-based sensor data flow and event group synchronization.
+\item Direct microcontroller hardware: I2C protocol handling, SHT31 sensor integration, NVS-based storage for credentials.
+\item HTTP client for pushing real-time telemetry; designed for deterministic timing on embedded platform.
+\end{itemize}
+
+\par\divider
+
+\cvevent{ONNX Model Inference \& Serving in C++}{Personal Project}{2025}{GitHub}
+
+Prototypical C++ inference server with AMPQ Message Routing for deploying and serving machine learning models.
+
+\begin{itemize}
+\item Model inference: Expose YOLOv11 object detection models via onnxruntime C++ API and AMQP message routing;
+\item OnnxInferLib abstraction layer for ONNX runtime inference with image preprocessing and post-processing pipelines.
+\item Testing: C++ GTest-based unit tests; Python client for results validation.
+\end{itemize}
+
+\bigskip
+\switchcolumn
+\cvsection{Education}
+\label{sec:org9e3d77f}
+\cvevent{PhD\ Reinforcement Learning}{Karlsruher Institut für Technologie (KIT)}{Aug 2025 -- Ongoing}{}
+\begin{itemize}
+\item Part-time PhD; drafting research proposal; active research group engagement
+\end{itemize}
+
+\divider
+
+\cvevent{M.Sc.\ Mathematics}{Goethe-University Frankfurt}{April 2022 -- Nov 2024}{}
+Thesis: \textit{Policy Evaluation in Distributional Reinforcment Learning} (Code on GitHub)
+\begin{itemize}
+\item Grade: 1.3
+\item Specialization: Probability Theory (Stochastic Analysis, Advanced Stochastics)
+\item Electives: Numerical Mathematics, Functional Analysis
+\item Minor: Computer Science (ML, Distributed Systems)
+\end{itemize}
+\divider
+
+\cvevent{B.Sc.\ Mathematics}{Goethe-University Frankfurt}{April 2019 -- Aug 2022}{}
+Thesis: \textit{Learning Using Statistical Invariants} (Code on GitHub)
+\begin{itemize}
+\item Grade: 2.3
+\item Specialization: Probability Theory; Minor: Computer Science
+\end{itemize}
+\divider
+
+\cvevent{B.Sc.\ Business Administration}{University of Mannheim}{Aug 2016 -- July 2019}{}
+\begin{itemize}
+\item Grade: 2.2
+\item Business fundamentals, finance, and management; concurrent with math studies
+\end{itemize}
+\divider
+
+\cvevent{Semester Abroad}{Singapore Management University}{Aug 2018 -- Dec 2018}{}
+\begin{itemize}
+\item Focus: Quantitative Finance, Statistics, Programming
+\end{itemize}
+\cvsection{Skills}
+\label{sec:org343638e}
+\cvtag{Python}
+\cvtag{C/C++}
+\cvtag{Embedded Systems}
+\cvtag{Microcontrollers}
+
+\divider
+
+\cvtag{Machine Learning}
+\cvtag{Model Inference}
+\cvtag{ONNX}
+\cvtag{PyTorch}
+
+\divider
+
+\cvtag{ESP32}
+\cvtag{FreeRTOS}
+\cvtag{ESP-IDF}
+\cvtag{CMake}
+
+\divider
+
+\cvtag{FastAPI}
+\cvtag{Docker}
+\cvtag{Linux}
+\cvtag{Git}
+\cvtag{REST APIs}
+\cvtag{CI/CD}
+\cvtag{Real-time Systems}
+
+\divider
+
+\cvtag{Computer Vision}
+
+\bigskip
+\cvsection{Languages}
+\label{sec:org819e2fe}
+\cvtag{German - Native}
+\cvtag{English - C1}
+\cvtag{Spanish - B1}
+\cvtag{Russian - A1}
+
+\bigskip
+\cvsection{Publications}
+\label{sec:org55fc75a}
+
+\nocite{*}
+\printbibliography
+
+\bigskip
+\cvsection{Interests}
+\label{sec:org7743674}
+Embedded Systems, Real-time AI, Microcontrollers, Language Learning, Fitness \& Nutrition, Cooking \& Fermentation
+
+\bigskip
+\end{paracol}
+\vfill
+\scriptsize{This CV is built ontop of the following template: https://github.com/aidanscannell/my-org-resume}
+\end{document}
+\end{document}
