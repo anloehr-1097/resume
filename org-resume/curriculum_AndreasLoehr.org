@@ -63,7 +63,7 @@
 
 ** Exporter Settings
 #+AUTHOR: Andreas Loehr
-#+EXPORT_FILE_NAME: ./curriculum-updated.pdf
+#+EXPORT_FILE_NAME: ./curriculum-AndreasLoehr.pdf
 #+OPTIONS: toc:nil title:nil H:1
 ** Macros
 #+MACRO: cvevent \cvevent{$1}{$2}{$3}{$4}
@@ -307,7 +307,7 @@ Thesis: \textit{Learning Using Statistical Invariants} (Code on GitHub)
 
 #+begin_export latex
   \nocite{*}
-  \printbibliography
+\printbibliography[heading=none,title={}]
 #+end_export
 
 {{{bigskip}}}
