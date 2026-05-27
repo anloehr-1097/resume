@@ -15,11 +15,14 @@
 `08/2025 – present`  
 Part-time PhD, currently drafting the research proposal for the official admission but actively engaging with the research group and coordinating with the professor.
 
+Topics: Distributional Reinforcement Learning, Offline Reinforcement Learning
+
+
 **M.Sc. Mathematics** — Goethe-University Frankfurt a.M. — Final Grade / GPA: 1.3 / 3.7  
 `04/2022 – 11/2024`  
 Specialization: Probability Theory (Stochastic Analysis + Advanced Stochastics)  
 Further Electives: Numerical Mathematics, Functional Analysis  
-Minor: Computer Science (Machine Learning Seminar, Computer Networking & Distributed Systems)
+Minor: Computer Science (Algorithms & Datastructures, Machine Learning Seminar, Computer Networking & Distributed Systems)
 
 **B.Sc. Mathematics** — Goethe-University Frankfurt a.M. — Final Grade / GPA: 2.3 / 2.7  
 `04/2019 – 08/2022`  
@@ -28,7 +31,7 @@ Further Electives: Algebraic Topology, Financial Mathematics
 Minor: Computer Science (Functional Programming, Compilers, Databases)
 
 **Semester Abroad** — Singapore Management University  
-`08/2018 – 12/2018`  
+  * [ ] `08/2018 – 12/2018`  
 Specialization: Quantitative Finance, Statistics, Programming
 
 **B.Sc. Business Administration** — University of Mannheim — Final Grade / GPA: 2.2 / 2.8  
@@ -44,10 +47,11 @@ Specialization: Quantitative Finance, Statistics, Programming
 Integrated custom Machine Learning solutions into the value stream modeling (VSM) software SimVSM.
 
 **1. Value Stream Digitization via Machine Learning**  
-Iterated on the value stream digitization backend developed during working student tenure (see below). Features included handling oversized panorama images via image preprocessing and making the system more robust by refactoring the backend to use task queues. Deployment via Docker Compose stack, monitoring via Sentry.
+Iterated on the value stream digitization backend developed during working student tenure (see below). Features included handling oversized panorama images via image preprocessing and making the system more robust by refactoring the backend to use task queues. Deployment via Docker Compose stack, monitoring via Sentry. Set up CI pipeline to verify basic expected behavior with unit tests (python 'unittest' library)
 
 **2. Value Stream Modeling Assistant via Agentic AI**  
 Built and integrated a value stream assistant based on agentic AI. Tasks included building an evaluation pipeline, integrating voice input using the Web Speech API and relevant speech transcription models, researching and prototyping promising directions for improvement of the assistant.
+Used Jest unit test framework to build an integration test for the agent evaluation and judgement to allow for iteration on the agent configureation, prompts, architecture in the future.
 
 ### Working Student in Software Engineering @ SimPlan AG, Hanau
 `11/2022 – 11/2024`
@@ -56,6 +60,8 @@ Integrated custom Machine Learning solutions into the value stream modeling (VSM
 
 - Built a three-step pipeline for object localization and detection, text detection (OCR) and edge detection to digitize analog value streams for use in SimVSM.
 - Tasks included crafting a custom backend to interface with the frontend application, data collection, image processing and model training of the object and text detection models.
+
+- Deployment of the Machine learning models with onnxruntime
 
 ### Student Worker to Prof. Dr. Matthias Kreck
 `02/2022 – 05/2022`
@@ -119,20 +125,37 @@ Topics: Entrepreneurship & Innovation. Acquired new speakers; created and design
 - **C/C++** — Working proficiency, actively polishing
 - **Git, Bash, Docker, Linux, Agentic AI** — Good working proficiency; working on the command line for the majority of time
 - **Networking** — Basic understading of OSI layers, working proficiency of application layer including web servers, reverse proxies
-- **TypeScript** — Working proficiency
+- **TypeScript** — Elementary proficiency
 - **R** — Elementary proficiency
 - **VBA** — Elementary proficiency in VBA for Excel and MS Access
 - **CI/CD** — Working knowledge. Built some pipeline with Jenkins, also gitlab ci pipeline in one of the work projects
 - **Testing** — Working knowledge of python unittest library as well as typescript jest library, some first experience with Google Test for C++.
-Also used jest to build integration test for evaluation of Agentic AI agent as part of the SimPlan work experience.
+- **Tools** — Vim, Nvim, some basic CMake and Make, tmux
+
+
 
 ### Microsoft Office
 
 Working proficiency: MS Word, MS Excel, MS PowerPoint, MS Access
 
+
+### Software Engineering
+- Ticket based working model, coordination with other Software Engineers on project-board
+- work in large typescript codebase
+- agile development
+
 ---
 
 ## Project Evidence & Inferred Strengths (for CV tailoring)
+
+### DoorMonitor (ESP32-S3 door monitoring firmware)
+
+- **Evidence (facts):** ESP32-S3 firmware built with ESP-IDF/CMake to monitor door events using reed and infrared sensors, with custom `RingBuffer` and `SharedRingContext` components for task-safe data exchange.
+- **What this demonstrates:** Embedded C++ development, sensor integration, task-based architecture, and low-level systems design for an always-on monitoring device.
+- **Signal processing task:** A `SignalProcessor` task consumes from two `SharedRingCtxt<int>` queues, waits until both have data, pops paired samples in the same read cycle, and evaluates them with `SignalEvaluator<int>` before acting on the result.
+- **Inference:** Active development with a clear focus on predictable sensor timing and extensible future sensor support. **Confidence:** High.
+- Actively integrating microphone over I2S -> understood protocol at a certain level so that I can work with it
+- Idea: deploy tiny ML model on ESP-32 to process audio data in order to listen for human noises, signs of burglary / someone breaking into home
 
 ### esp-32-home (Home automation on ESP32, ESP-IDF, C++)
 
@@ -179,6 +202,7 @@ Working proficiency: MS Word, MS Excel, MS PowerPoint, MS Access
 - **Evidence (facts):** Full implementation package for LUSI/ERM-LUSI workflow (`lusi_Andreas_Loehr.py`, `lusi_periphery.py`, `lusi_demo.ipynb`, environment specification), with repository history marking finalized thesis state.
 - **What this demonstrates:** End-to-end scientific ML implementation experience: data handling, model training flows, and demonstration artifacts.
 - **Inference:** Early but meaningful foundation in translating academic ML concepts into executable codebases. **Confidence:** High.
+- **Uses Tensorflow** 
 
 ### Cross-project strength synthesis (inference)
 

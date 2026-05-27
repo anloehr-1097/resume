@@ -1,4 +1,4 @@
-% Created 2026-04-23 Thu 10:32
+% Created 2026-04-23 Thu 11:50
 % Intended LaTeX compiler: pdflatex
 \documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
 
@@ -48,7 +48,7 @@
 
 \name{Andreas Loehr}
 % \photoR{2.8cm}{aidan_portrait.jpeg}
-\tagline{ML Engineer \& Part-time PhD Student in Reinforcement Learning}
+\tagline{Embedded Systems Engineer \& ML Systems Developer}
 \personalinfo{
   \email{andreas.loehr97@gmail.com}
   \phone{+49 151 27243434}
@@ -60,19 +60,19 @@
 \makecvheader
 \vspace{0.2cm}
  \begin{quote}
- Mathematics-driven Software Engineer with focus on Machine Learning and Reinforcement Learning. Experience integrating ML solutions into production systems, building distributed systems, and conducting applied research. Passionate about understanding systems at depth.
+ Software Engineer with strong fundamentals in C++, embedded systems, and ML integration. Experienced building end-to-end systems from hardware interface to application layer; comfortable working at multiple levels of abstraction with attention to system architecture and reliability.
  \end{quote}
 \vspace{0.2cm}
 \begin{paracol}{2}
 \cvsection{Experience}
-\label{sec:org1be8bed}
+\label{sec:org86b947a}
 \cvevent{Software Engineer - Machine Learning}{SimPlan AG}{Nov 2024 -- Ongoing}{Hanau, Germany}
 
-Integrated custom Machine Learning solutions into value stream modeling (VSM) software SimVSM.
+Integrated ML solutions into production VSM software, building ML backend pipelines and user-facing features.
 
 \begin{itemize}
-\item Value Stream Digitization: Iterated on ML backend for digitizing analog value streams (c.f. Working Student section). Implemented image preprocessing pipeline to handle large panorama images, refactored backend to use task queues for robustness, and deployed via Docker Compose with Sentry monitoring.
-\item Value Stream Assistant: Built and integrated agentic AI assistant with voice input (Web Speech API), evaluation pipeline. Iterative prototyping for assistant improvements.
+\item Value Stream Digitization: Improved ML backend for digitizing analog value streams. Implemented image preprocessing to handle large panorama images, refactored backend to use task queues for robustness, deployed via Docker Compose with Sentry monitoring.
+\item Value Stream Assistant: Built and integrated agentic AI assistant with voice input (Web Speech API) and evaluation pipeline. Iteratively tested and refined assistant capabilities.
 \end{itemize}
 
 \par\divider
@@ -82,8 +82,8 @@ Integrated custom Machine Learning solutions into value stream modeling (VSM) so
 Implemented ML pipeline for value stream digitization in VSM software.
 
 \begin{itemize}
-\item Built three-step computer vision pipeline: object detection, OCR text detection, and edge detection for digitizing analog value streams (edge detection just integrated, mostly done by our univeristy partner).
-\item Developed custom backend API, conducted data collection and annotation, trained object and text detection models.
+\item Built three-step computer vision pipeline: object detection, OCR text detection, and edge detection. Custom backend API design; responsible for full data pipeline (collection, preprocessing, model training).
+\item Trained and deployed object and text detection models for production use.
 \end{itemize}
 
 \par\divider
@@ -96,7 +96,7 @@ Translated discrete-time epidemic/pandemic modeling tool from Mathematica to Pyt
 
 \cvevent{Working Student - Risk Management}{Deloitte Risk Advisory}{June 2019 -- May 2021}{Frankfurt, Germany}
 
-Developed text mining and data analysis tools for financial risk assessment.
+Developed data analysis and text mining tools for financial risk assessment.
 
 \begin{itemize}
 \item Built MS Access/VBA frontend for SQL Server backend (NII stress testing tool): document upload, analysis, simulation validation, and automated report generation with unit and integration tests.
@@ -111,13 +111,12 @@ Image preprocessing and OCR enhancement for financial documents.
 
 \begin{itemize}
 \item Developed image preprocessing pipeline using OpenCV to improve OCR accuracy on document scans.
-\item Applied techniques: noise reduction, binarization, deskewing; integrated into document analysis workflow.
 \end{itemize}
 
 
 \bigskip
 \cvsection{Projects}
-\label{sec:orgf68f42f}
+\label{sec:org9e2ff70}
 \cvevent{Real-time Embedded Sensing on ESP32 via ESP-IDF}{Personal Project}{2026}{GitHub}
 
 Low-level embedded C++ application for sensor data collection on microcontroller with FreeRTOS-based architecture.
@@ -125,25 +124,25 @@ Low-level embedded C++ application for sensor data collection on microcontroller
 \begin{itemize}
 \item Task-based concurrency model (WifiConnectTask, Sht3xTask, UpdateTask, TimeSyncTask) with queue-based sensor data flow and event group synchronization.
 \item Direct microcontroller hardware: I2C protocol handling, SHT31 sensor integration, NVS-based storage for credentials.
-\item HTTP client for pushing real-time telemetry; designed for deterministic timing on embedded platform.
+\item HTTP client for pushing real-time telemetry; designed for deterministic operation on embedded platform.
 \end{itemize}
 
 \par\divider
 
 \cvevent{ONNX Model Inference \& Serving in C++}{Personal Project}{2025}{GitHub}
 
-Prototypical C++ inference server with AMPQ Message Routing for deploying and serving machine learning models.
+Prototypical C++ inference server with AMQP message routing for deploying and serving machine learning models.
 
 \begin{itemize}
-\item Model inference: Expose YOLOv11 object detection models via onnxruntime C++ API and AMQP message routing;
-\item OnnxInferLib abstraction layer for ONNX runtime inference with image preprocessing and post-processing pipelines.
+\item Model inference: Expose YOLOv11 object detection models via onnxruntime C++ API and AMQP message routing.
+\item OnnxInferLib abstraction layer for ONNX runtime inference with image preprocessing and postprocessing pipelines.
 \item Testing: C++ GTest-based unit tests; Python client for results validation.
 \end{itemize}
 
 \bigskip
 \switchcolumn
 \cvsection{Education}
-\label{sec:org3dac660}
+\label{sec:orgf6576be}
 \cvevent{PhD\ Reinforcement Learning}{Karlsruher Institut für Technologie (KIT)}{Aug 2025 -- Ongoing}{}
 \begin{itemize}
 \item Part-time PhD; drafting research proposal; active research group engagement
@@ -181,7 +180,7 @@ Thesis: \textit{Learning Using Statistical Invariants} (Code on GitHub)
 \item Focus: Quantitative Finance, Statistics, Programming
 \end{itemize}
 \cvsection{Skills}
-\label{sec:org3872983}
+\label{sec:org1f8cfee}
 \cvtag{Python}
 \cvtag{C/C++}
 \cvtag{Embedded Systems}
@@ -217,7 +216,7 @@ Thesis: \textit{Learning Using Statistical Invariants} (Code on GitHub)
 
 \bigskip
 \cvsection{Languages}
-\label{sec:org4af5649}
+\label{sec:org570ae7b}
 \cvtag{German - Native}
 \cvtag{English - C1}
 \cvtag{Spanish - B1}
@@ -225,15 +224,15 @@ Thesis: \textit{Learning Using Statistical Invariants} (Code on GitHub)
 
 \bigskip
 \cvsection{Publications}
-\label{sec:org3149b27}
+\label{sec:orgab2a46a}
 
   \nocite{*}
 \printbibliography[heading=none,title={}]
 
 \bigskip
 \cvsection{Interests}
-\label{sec:orgc315d98}
-Embedded Systems, Real-time AI, Microcontrollers, Language Learning, Fitness \& Nutrition, Cooking \& Fermentation
+\label{sec:org3503436}
+Embedded Systems, Microcontrollers, Machine Learning, Programming, Mathematics, Language Learning, Fitness \& Nutrition
 
 \bigskip
 \end{paracol}
