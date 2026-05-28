@@ -1,0 +1,82 @@
+* Config/Preamble :noexport:
+** LaTeX Config
+#+BEGIN_SRC emacs-lisp :exports none  :results none :eval always
+  (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf")))
+  (add-to-list 'org-latex-classes
+               '("altacv" "\\documentclass[10pt,a4paper,ragged2e,withhyper]{altacv}
+
+  \\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=1.5cm,columnsep=1.2cm}
+  \\renewcommand{\\familydefault}{\\sfdefault}
+
+  \\definecolor{SlateGrey}{HTML}{2E2E2E}
+  \\definecolor{LightGrey}{HTML}{666666}
+  \\definecolor{DarkPastelRed}{HTML}{450808}
+  \\definecolor{PastelRed}{HTML}{8F0D0D}
+  \\definecolor{GoldenEarth}{HTML}{E7D192}
+  \\colorlet{name}{black}
+  \\colorlet{tagline}{PastelRed}
+  \\colorlet{heading}{DarkPastelRed}
+  \\colorlet{headingrule}{GoldenEarth}
+  \\colorlet{subheading}{PastelRed}
+  \\colorlet{accent}{PastelRed}
+  \\colorlet{emphasis}{SlateGrey}
+  \\colorlet{body}{LightGrey}
+
+  \\renewcommand{\\namefont}{\\Large\\rmfamily\\bfseries}
+  \\renewcommand{\\personalinfofont}{\\tiny}
+  \\renewcommand{\\cvsectionfont}{\\large\\rmfamily\\bfseries}
+  \\renewcommand{\\cvsubsectionfont}{\\normalsize\\bfseries}
+
+  \\renewcommand{\\itemmarker}{{\\small\\textbullet}}
+  \\renewcommand{\\ratingmarker}{\\faCircle}
+
+  "
+
+                 ("\\cvsection{%s}" . "\\cvsection*{%s}")
+                 ("\\cvevent{%s}" . "\\cvevent*{%s}")))
+  (setq org-latex-packages-alist 'nil)
+  (setq org-latex-default-packages-alist
+        '(("rm" "roboto"  t)
+          ("defaultsans" "lato" t)
+          ))
+#+END_SRC
+#+LATEX_CLASS: altacv
+#+LATEX_HEADER: \usepackage[bottom]{footmisc}
+** Exporter Settings
+#+AUTHOR: Andreas Loehr
+#+EXPORT_FILE_NAME: ./Anschreiben_Andreas_Loehr_FrauenhoferAudio.pdf
+#+OPTIONS: toc:nil title:nil H:1
+
+* Letter Header :ignore:
+#+begin_export latex
+\name{Andreas Loehr}
+\tagline{C/C++ Software \& ML Engineer}
+\personalinfo{
+  \email{andreas.loehr97@gmail.com}
+  \phone{+49 151 27243434}
+  \location{Frankfurt, Germany}
+  \github{anloehr-1097}
+  \linkedin{andreas-loehr-486a52135}
+}
+\makecvheader
+#+end_export
+* Letter Body :ignore:
+
+Sehr geehrte Damen und Herren,
+
+die Position in der Abteilung *Audio* am Fraunhofer IIS reizt mich besonders, da sie anspruchsvolle C/C++‑Entwicklung mit angewandter Forschung in der Audiosignalverarbeitung verbindet.
+
+In meiner bisherigen Position konnte ich bereits Erfahrung mit einigen der von Ihnen genannten Tools aus dem CI/CD Bereich wie Jenkins und der GitLab CI sammeln und durch Kombination einer abdeckenden Test Suite den starken Mehrwert zur Sicherstellung der Robustheit der Sotware sehen können.
+In meiner Freizeit entwickle ich darüber hinaus in verschiedenen Projekten C/C++‑Software mit CMake und Git die ich teils mit Unit‑Tests mit GoogleTest ausgebaut habe. Im ESP32‑Projekt habe ich ein echtzeitnahes, nebenläufiges System mit hardware‑naher Sensoranbindung implementiert, darunter auch die Einbindung eines Microphons über I2S. 
+
+Direkte Erfahrung mit Audiocodecs, Psychoakustik oder wissenschaftlichen Hörtests habe ich noch nicht. Allerdings erlauben mir meine ersten Berührpunkte mit der Signalverarbeitung im Kontext von Bildvorverarbeitung und Sensorik sowie meine mathematische Ausbildung mich gezielt in Audio‑DSP und Audiocodierung einarbeiten. Erste Erfahrung im Forschungsumfeld bringe ich durch meine laufende Promotion mit.
+
+Ich freue mich darauf, meine C/C++‑Expertise und Lernbereitschaft in Ihr Team einzubringen und die Möglichkeiten in einem persönlichen Gespräch zu vertiefen.
+
+#+begin_export latex
+\vspace{0.5cm}
+#+end_export
+
+Mit freundlichen Gruessen  
+
+Andreas Loehr

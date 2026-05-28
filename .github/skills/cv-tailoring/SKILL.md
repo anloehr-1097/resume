@@ -12,7 +12,7 @@ Process:
 4. Rewrite project summaries to match the target role, but keep every claim grounded in the source material.
 5. Add or remove project entries only when they are supported by the source CV or direct repository evidence.
 6. Keep the tone concise and factual.
-7. Copy the altacv.cls file from the template folder to the job folder if it is not already present.
+7. Copy the contents of the org-resume directory folder to the job folder.
 
 Rules:
 - Do not invent domain experience, certifications, or tools.

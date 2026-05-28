@@ -4,6 +4,7 @@ description: Write a concise cover letter from the source CV and job description
 ---
 
 Use this skill when creating a cover or motivation letter for a specific job.
+Use the template in @CoverLetter_AndreasLoehr.org
 
 Process:
 1. Read the job description and identify the strongest reasons the role fits the applicant.
