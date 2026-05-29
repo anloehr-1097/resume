@@ -50,7 +50,7 @@ Integrated custom Machine Learning solutions into the value stream modeling (VSM
 Iterated on the value stream digitization backend developed during working student tenure (see below). Features included handling oversized panorama images via image preprocessing and making the system more robust by refactoring the backend to use task queues. Deployment via Docker Compose stack, monitoring via Sentry. Set up CI pipeline to verify basic expected behavior with unit tests (python 'unittest' library)
 
 **2. Value Stream Modeling Assistant via Agentic AI**  
-Built and integrated a value stream assistant based on agentic AI. Tasks included building an evaluation pipeline, integrating voice input using the Web Speech API and relevant speech transcription models, researching and prototyping promising directions for improvement of the assistant.
+Built and integrated a value stream assistant based on **agentic AI**. Tasks included building an evaluation pipeline, integrating voice input using the Web Speech API and relevant speech transcription models, researching and prototyping promising directions for improvement of the assistant.
 Used Jest unit test framework to build an integration test for the agent evaluation and judgement to allow for iteration on the agent configureation, prompts, architecture in the future.
 
 ### Working Student in Software Engineering @ SimPlan AG, Hanau
@@ -203,6 +203,10 @@ Working proficiency: MS Word, MS Excel, MS PowerPoint, MS Access
 - **What this demonstrates:** End-to-end scientific ML implementation experience: data handling, model training flows, and demonstration artifacts.
 - **Inference:** Early but meaningful foundation in translating academic ML concepts into executable codebases. **Confidence:** High.
 - **Uses Tensorflow** 
+
+### PyCppInterOpRL (Python/C++ interop for RL with libtorch + pybind11)
+   - Prototype bridging C++ RL components into Python via a pybind11 module (np_interop.cpp), exposing policy, replay buffer, transitions, and a training entrypoint.
+   - CMake build links libtorch/torch_python, Eigen, and pybind11
 
 ### Cross-project strength synthesis (inference)
 
