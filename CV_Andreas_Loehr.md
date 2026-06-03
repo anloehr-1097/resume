@@ -13,8 +13,7 @@
 
 **PhD Reinforcement Learning** — Karlsruher Institut für Technologie (KIT)  
 `08/2025 – present`  
-Part-time PhD, currently drafting the research proposal for the official admission but actively engaging with the research group and coordinating with the professor.
-
+Part-time PhD.
 Topics: Distributional Reinforcement Learning, Offline Reinforcement Learning
 
 
