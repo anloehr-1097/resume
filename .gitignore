@@ -1,6 +1,9 @@
 *~
 *.bu*
 Jobs/
+Jobs.bak/
 status.org
 Templates
+Templates.bak/
 .DS_Store
+
