@@ -1,0 +1,496 @@
+#+TITLE: moderncv CV and cover letter, authored in Org mode
+#+AUTHOR: Andreas Loehr
+#+OPTIONS: toc:2
+
+A third rendering of the CV, alongside [[file:../org-resume/][=org-resume/=]] (altaCV) and
+[[file:../1.5-column-cv/][=1.5-column-cv/=]] (=cv15col=), built on the standard LaTeX *moderncv* class.
+Same working model as the other two: a self-contained =.org= file edited in
+Emacs, exported with =org-latex-export-to-pdf=, no hand-maintained =.tex=.
+
+Everything below was checked against *moderncv 2.6.1* (=2026-06-24=) sources
+and against =ox-latex.el= / =ox.el=. Nothing has been compiled — there is no
+TeX and no Emacs in the devcontainer, so the first real build happens on the
+Mac. See [[*Verification][Verification]].
+
+* Files
+
+| File                           | Purpose                                                   |
+|--------------------------------+-----------------------------------------------------------|
+| [[file:CV_AndreasLoehr.org][=CV_AndreasLoehr.org=]]          | The CV. Registers the =moderncv= org-latex class.         |
+| [[file:CoverLetter_AndreasLoehr.org][=CoverLetter_AndreasLoehr.org=]] | Cover letter. Registers =moderncvletter=.                 |
+| [[file:andy.bib][=andy.bib=]]                     | Publications, copied from =../org-resume/=. Not compiled in — see [[*Publications][Publications]]. |
+| [[file:.latexmkrc][=.latexmkrc=]]                   | Pins pdflatex for command-line builds.                    |
+
+=moderncv.cls= is *not* vendored here. Unlike =altacv.cls= it ships with TeX
+Live in =collection-latexextra=.
+
+* Building
+
+** From Emacs
+Open the file and =C-c C-e l o=. The =LaTeX Config= source block must have
+been evaluated first (=C-c C-c= on the block, or =org-babel-execute-buffer=)
+so that =org-latex-classes= knows about =moderncv=.
+
+The config block activates =ox-extra= itself, so =:ignore:= works without
+anything in your init.
+
+** Headless
+
+#+begin_src sh
+  emacs --batch -l org \
+    --eval '(progn
+              (setq org-confirm-babel-evaluate nil)
+              (find-file "CV_AndreasLoehr.org")
+              (org-babel-execute-buffer)
+              (org-latex-export-to-pdf))'
+#+end_src
+
+=org-babel-execute-buffer= is *required*, not optional: the config block is
+=:exports none=, and =org-babel-exp-process-buffer= does not evaluate
+=:exports none= blocks during export. =:eval always= only bypasses the
+confirmation prompt, it does not schedule execution.
+
+** Straight LaTeX
+Useful for telling org problems apart from LaTeX problems: export to =.tex=
+only (=C-c C-e l l=), then
+
+#+begin_src sh
+  latexmk -f -pdf -interaction=nonstopmode CV_AndreasLoehr.tex
+  latexmk -C          # clean
+#+end_src
+
+* Adding an entry
+
+#+begin_example
+  ** Some Role at Some Company :ignore:
+  #+ATTR_LATEX: :options {11/2024 -- present}
+  #+begin_cvblock
+  *Job Title*, Employer, /City/
+
+  One or two sentences of context.
+
+  - a bullet
+  - another bullet
+  #+end_cvblock
+#+end_example
+
+The =:ignore:= headline exists purely so the entry folds in the outline; it
+is dropped on export. Everything inside =cvblock= is ordinary org.
+
+Reordering sections is a matter of moving org subtrees (=M-up= / =M-down= on
+the headline). Dropping one is a matter of tagging it =:noexport:= —
+=Courses & Certifications=, =Voluntary Work & Activities= and a
+=More Projects= subtree are already in the file that way.
+
+* Design notes
+
+** Why cvblock exists
+altaCV's =\cvevent= prints a header line inline into a flowing =paracol=
+column, so a following org paragraph or =- item= list continues in the same
+column. That is why the altaCV files can be written in almost pure org.
+
+moderncv works differently. In the body used by =classic= (=moderncvbodyi=),
+=\cvitem= is literally
+
+: \renewcommand*{\cvitem}[3][.25em]{%
+:   \begin{tabular}{@{}p{\hintscolumnwidth}@{\hspace{\separatorcolumnwidth}}p{\maincolumnwidth}@{}}%
+:     \raggedleft\hintstyle{#2} &{#3}%
+:   \end{tabular}%
+:   \par\addvspace{#1}}
+
+— one self-contained =tabular= row per call. A native org list written
+*after* a =\cventry= is outside that argument, so it typesets at full page
+width, outside the main column, and the layout visibly breaks. Same
+constraint as [[file:../1.5-column-cv/cv-template.org][=../1.5-column-cv/cv-template.org=]], which solved it by writing
+every entry as literal LaTeX in =#+begin_export latex= blocks.
+
+=cvblock= takes the other route. It is an *environment*, not a command: it
+opens the hint column and the main column and leaves the main column open,
+so arbitrary org content is emitted inside it and lands in the right place.
+Org folding, =M-RET=, =*bold*=, =/italic/=, links and spell-check all keep
+working, which is the whole point.
+
+** One thing moderncv does NOT inherit from the 1.5-column template
+That template's =NOTE on row separation= — every export block must end with
+an explicit =\par= or rows collapse onto one line — *does not apply here*.
+Every moderncv row command already ends in =\par\addvspace{...}=. The =\par=
+lines in the export blocks of the CV are harmless belt-and-braces, not a
+requirement.
+
+** Why cvblock is a list and not a minipage
+moderncv builds its rows from =tabular=. =cvblock= uses a LaTeX =list=
+instead, because *a list breaks across a page boundary and a tabular does
+not*. With the class's own mechanism, a long entry that does not fit in the
+remaining space is pushed onto the next page whole, leaving a hole. With a
+list it simply flows.
+
+The =\parbox[t]{\labelwidth}= in =\makelabel= is what lets a long hint wrap
+onto a second line instead of overflowing into the main column.
+
+** moderncv internals cvblock depends on
+Three, and only three. All are declared in =moderncv.cls= and filled in by
+=moderncvbody<N>.sty=, in every shipped style:
+
+| Name                    | Used for                    | Guard in the preamble                       |
+|-------------------------+-----------------------------+---------------------------------------------|
+| =\hintscolumnwidth=     | width of the left/date column | none needed — documented moderncv API     |
+| =\separatorcolumnwidth= | gap between the two columns | =\@ifundefined=, falls back to =0.025\textwidth= |
+| =\hintstyle=            | formatting of the hint text | renewed outright in the Type scale block |
+
+To take full control of the hint appearance, change =\providecommand*= to
+=\renewcommand*=.
+
+*** If cvblock ever misbehaves, bisect it
+1. Hand the captured content to moderncv's *own* =\cvitem= instead, via an
+   =lrbox= + =minipage= pair. Style-agnostic and inherits moderncv's spacing
+   exactly, at the cost of losing the page break.
+2. Reimplement the =tabular= from =moderncvbodyi= literally (the four lines
+   quoted above) — isolates list-vs-tabular.
+3. Define the two lengths from =\textwidth= directly (=0.175= / =0.025=,
+   which are body 1's own values) — removes every moderncv dependency and
+   tells you whether the class or the block is at fault.
+4. Fall back to plain =\cventry= inside =#+begin_export latex=, which needs
+   no custom LaTeX at all.
+
+** Style and the hint column
+=cvblock= targets a two-column hint/main layout. Only some styles have one:
+
+| style          | =\cvitem= layout      | default =\hintscolumnwidth= | note                                    |
+|----------------+-----------------------+-----------------------------+-----------------------------------------|
+| *classic*      | two-column =tabular=  | =0.175\textwidth=           | what this setup uses                    |
+| casual         | two-column =tabular=  | =0.175\textwidth=           | ⚠ defaults to =nodetails= — contacts move to the footer; use =\moderncvstyle[details]{casual}= |
+| contemporary   | two-column =tabular=  | =0.175\textwidth=           | adds a QR code and a coloured header band |
+| banking        | inline =hint: text=   | =0.3\textwidth=             | =cvblock= compiles but the look diverges |
+| oldstyle       | inline =hint: text=   | =0.3\textwidth=             | as above                                |
+| fancy          | inline                | =0.25\textwidth=            | as above                                |
+
+** Type scale
+moderncv's =*style= commands hardcode their font sizes, so the only way to
+change them is to renew them outright. The =Type scale= block in the
+preamble does that for:
+
+| command                            | set to                      | affects                          |
+|------------------------------------+-----------------------------+----------------------------------|
+| =\firstnamestyle= / =\lastnamestyle= | =\fontsize{24}{27}=       | the name in the header           |
+| =\titlestyle=                      | =\normalsize\slshape=       | the tagline under the name       |
+| =\addressstyle=                    | =\footnotesize=             | the contact block                |
+| =\quotestyle=                      | =\small\slshape=            | the personal statement           |
+| =\sectionstyle=                    | =\large\bfseries=           | section headings                 |
+| =\subsectionstyle=                 | =\normalsize\bfseries=      | subsection headings              |
+| =\hintstyle=                       | =\leavevmode\footnotesize=  | the date column, and =cvblock='s hint |
+
+Two constraints:
+
+1. *They must come after =\moderncvstyle=*, which is what installs the
+   originals. Same reason the colour overrides have to come before it.
+2. Each is written as =\providecommand*{\X}[1]{}= followed by
+   =\renewcommand*{\X}[1]{...}=. The pair is safe whether or not the
+   installed moderncv defines that name — but it also means a *wrong* name
+   fails silently rather than erroring.
+
+So if one of these appears to do nothing, the head style is calling a
+differently named macro. Find the real one with:
+
+#+begin_src sh
+  grep -n 'namestyle\|titlestyle\|quotestyle\|sectionstyle\|hintstyle' \
+    "$(kpsewhich moderncvheadi.sty)" "$(kpsewhich moderncvbodyi.sty)" \
+    "$(kpsewhich moderncvstyleclassic.sty)"
+#+end_src
+
+Body text size is set by the class option instead — =10pt= rather than
+moderncv's default =11pt=. Note that in LaTeX's size files only
+=\normalsize= and smaller differ between =10pt= and =11pt=; =\large= and up
+are identical. That is why the section headings needed an explicit
+=\sectionstyle= renewal and could not just ride on the class option.
+
+** Personal statement width
+moderncv centres the =\quote{...}= blurb in a box of =\quotewidth=, which
+defaults to =0.65\textwidth=. A plain =\setlength{\quotewidth}{...}= in the
+preamble is silently undone: =\makecvhead= calls =\recomputecvheadlengths=
+on every run, which unconditionally resets =\quotewidth= back to
+=0.65\textwidth=. The fix is to append the override to that macro instead,
+so ours runs last:
+
+: \makeatletter
+: \@ifundefined{quotewidth}{}{\g@addto@macro{\recomputecvheadlengths}{\setlength{\quotewidth}{0.9\textwidth}}}
+: \makeatother
+
+If the statement still looks narrow, that guard found nothing — check
+=grep -n quotewidth "$(kpsewhich moderncvheadi.sty)"= for the real name.
+Note this file is documentation only — the actual preamble lives in the
+=org-latex-classes= elisp block in =CV_AndreasLoehr.org=, which is what
+actually gets exported.
+
+* Gotchas
+
+** =#+ATTR_LATEX:= placement
+It must sit immediately above =#+begin_cvblock= with *no blank line*
+between, or the argument is dropped and the build fails with a missing
+argument. The braces in =:options {...}= are required, because =cvblock=
+takes one mandatory argument and =:options= is passed to LaTeX verbatim.
+
+Verbatim also means no org escaping happens there: write =\&=, =\%=, =\#=
+rather than the bare characters in a hint. Also avoid a =:word= followed by
+a space inside a hint — =org-export-read-attribute= would read it as the
+start of a new attribute key.
+
+** A hint that wraps to two lines
+The hint is typeset by =\makelabel= into a box of exactly
+=\hintscolumnwidth=. If the text does not fit it wraps — and because a list
+label lives on the item's *first* line, the second line of a wrapped hint
+can collide with the entry's opening line. =\hintscolumnwidth= is therefore
+set to =2.8cm= here rather than body 1's default =0.175\textwidth=. At the
+=\footnotesize= the Type scale block gives the hint, that comfortably fits
+the longest one in the file (=11/2022 -- 11/2024=). If you add a longer hint,
+or enlarge =\hintstyle=, either shorten the text or widen the column.
+
+** Dates sagging under the headlines (the colour whatsit)
+The renewed =\hintstyle= colours its text with a bare =\color{hintstylecolor}=
+— and it *must* start with =\leavevmode= before it does. At the start of the
+hint's box (=\cvblock='s =\parbox[t]= label, =\cvitem='s =p= column cell) TeX
+is still in vertical mode, and a =\color= whatsit emitted there lands on the
+box's vlist *ahead of* the first line box. A =\parbox[t]= then takes its
+reference point from that whatsit instead of the line's baseline: the box
+comes out 0pt high with the entire hint hanging below the shared baseline as
+depth (measured with =\pdfsavepos=). Every date then sits a full glyph
+height — about 5.8pt at =\footnotesize=, 8.4pt in =\cvitem= rows — *below*
+its headline, which reads as "the dates are shifted down / the headlines are
+shifted up".
+
+=\leavevmode= starts the line first, so the whatsit lands inside it and the
+hint shares the body's baseline exactly. Stock moderncv is immune only by
+accident of wording: its own =\hintstyle= goes through =\textcolor=, which
+xcolor defines as =\protect\leavevmode{\color...}=, so the whatsit never
+leads the box. Drop the =\leavevmode= from the Type scale block and every
+=cvblock= date visibly sags again — it is load-bearing, not cosmetic.
+
+** What stock org export breaks under moderncv
+moderncv does *not* =\LoadClass{article}= — it only inputs the size =.clo=
+file. So several things org emits by default have nothing to land on:
+
+| Org construct              | Emits                        | Result                                                    |
+|----------------------------+------------------------------+-----------------------------------------------------------|
+| =#+begin_quote=            | =\begin{quote}=              | 💥 silent corruption — =\quote= is moderncv's one-argument header-blurb *command*, so the environment does not exist |
+| =#+CAPTION:= on image      | =\begin{figure}[htbp]=       | 💥 undefined — moderncv has no float machinery            |
+| =#+CAPTION:= on table      | =\begin{table}[htbp]=        | 💥 undefined                                              |
+| =#+begin_verse=            | =\begin{verse}=              | 💥 undefined                                              |
+| =ALT_TITLE= / footnote in a headline | =\section[alt]{title}= | 💥 breaks moderncv's =\section= xparse signature       |
+| footnotes                  | =\footnote{}=                | ⚠ listed in moderncv's =KNOWN_BUGS= as erroring; output reportedly still correct under =-interaction=nonstopmode= |
+| plain table (no caption)   | =center= + =tabular=         | ✅ both are LaTeX kernel                                  |
+| =- item= / =1.= lists      | =itemize= / =enumerate=      | ✅ moderncv bundles =tweaklist.sty= and tightens them      |
+| =+strike+=                 | =\sout{}=                    | needs =ulem= re-added to the package list                  |
+
+The header blurb is the =\quote{...}= call in the CV Header export block —
+that is the supported way to get the personal statement.
+
+** =\hypersetup= — why the template is disabled
+moderncv loads hyperref from =\AtEndPreamble=, which etoolbox fires only
+when =\begin{document}= runs — i.e. *after* every preamble line. Org writes
+=\hypersetup{...}= into the preamble, so it would be an undefined control
+sequence.
+
+The config block therefore sets =(setq org-latex-hyperref-template nil)=.
+Nothing is lost: moderncv fills in =pdfauthor=, =pdftitle=, =pdfsubject= and
+=pdfkeywords= itself from =\name= and =\title=.
+
+There is a timing trap in exactly that: moderncv's metadata expands to
+=\@firstname{}~\@lastname{}= etc., and hyperref versions such as 7.00u
+expand the metadata *as =\begin{document}= runs*. =\name= is called from
+the CV Header / Letter Header block, which org can only emit in the *body* —
+so the macros are still undefined at that moment: eight =Undefined control
+sequence= errors, =latexmk= exit 12, org's "PDF file produced with errors.",
+and an empty =/Author= in the PDF. (=\title= is safe — org writes it into
+the preamble.) Both org files therefore repeat =\name= in a =#+LATEX_HEADER:=
+line, which lands in the preamble; the body call re-sets the identical
+values and the rendered name is unchanged. Symptom check: the export message
+must say "PDF file produced." — the suffix "with errors" is this trap.
+
+The alternative — putting =("" "hyperref" nil)= back into
+=org-latex-default-packages-alist= so it loads early — also works, but
+produces an options clash warning from moderncv's later
+=\PassOptionsToPackage{unicode}{hyperref}=.
+
+** =\title=, =\author=, =\date=
+Org writes all three into the preamble *unconditionally*. =#+OPTIONS:
+title:nil= suppresses only the title *command* (=\maketitle=), not the
+=\title{...}= line. moderncv =\renewcommand*=s both =\title= and =\date=.
+Consequences, both of which this setup relies on:
+
+- =#+TITLE:= at the top of each file *is* moderncv's tagline, the line under
+  the name. Do not also set =\title{}= in an export block.
+- =\author{}= is harmless — moderncv does not use it.
+- An empty =\date{}= from org would blank moderncv's default =\today=, so
+  the cover letter re-issues =\date{...}= in its body export block. =\date=
+  is just a =\def=, so the later call wins.
+
+** Colours — the ordering is load-bearing
+moderncv exposes exactly three colours: =color0= (body), =color1= (primary
+accent), =color2= (secondary accent). =\moderncvstyle= then aliases the
+semantic names off them —=\colorlet{sectioncolor}{color1}=,
+=\colorlet{bodyrulecolor}{color1}=, =\colorlet{titlecolor}{color2}=, … — and
+*=\colorlet= snapshots the value*. So the order must be:
+
+: \moderncvcolor{grey}  →  override color0/1/2  →  \moderncvstyle{classic}  →  optionally override semantic names
+
+Redefining =color1= *after* =\moderncvstyle= changes nothing about the
+section headings. It looks like it worked and the CV comes out in the stock
+palette. Palette mapping used here:
+
+| altaCV name   | hex       | moderncv role                                    |
+|---------------+-----------+--------------------------------------------------|
+| SlateGrey     | =#2E2E2E= | =color0= — body text                             |
+| DarkPastelRed | =#450808= | =color1= — section headings, list bullets        |
+| PastelRed     | =#8F0D0D= | =color2= — tagline, subsections                  |
+| LightGrey     | =#666666= | =hintstylecolor=, =addresscolor=                 |
+| GoldenEarth   | =#E7D192= | =bodyrulecolor=, =headrulecolor=                 |
+
+** =\section*=
+In moderncv 2.x, =\section= is an xparse =\RenewDocumentCommand{\section}{sm}=
+— the star is absorbed and *ignored*, so =\section*{X}= and =\section{X}=
+typeset identically. Both halves of each cons in the =org-latex-classes=
+entry nonetheless map to the unstarred form:
+
+: ("\\section{%s}" . "\\section{%s}")
+
+That is correct for every moderncv version including pre-2.0 ones, where
+=\section*{X}= would have typeset a stray =*=.
+
+** Package list
+=org-latex-packages-alist= is nil and =org-latex-default-packages-alist= is
+cut down to =inputenc= + =fontenc=, both carrying the =("pdflatex")=
+compiler restriction so org drops them automatically under xelatex/lualatex
+— matching moderncv's own =\ifxetexorluatex= branch. Dropped on purpose:
+
+| dropped                                | why                                          |
+|----------------------------------------+----------------------------------------------|
+| =graphicx=, =hyperref=                 | moderncv =\RequirePackage=s both itself      |
+| =longtable=, =wrapfig=, =rotating=, =capt-of= | float/caption machinery moderncv has not |
+| =amsmath=, =amssymb=                   | unused in a CV — re-add if you need =align=  |
+| =ulem=                                 | re-add =("normalem" "ulem" t)= for =+strike+= |
+
+** Publications
+moderncv's =KNOWN_BUGS= lists it as incompatible with *biblatex* and with
+*biber* — exactly the toolchain the altaCV CV uses. That cannot be carried
+over, so the two entries in =andy.bib= are written out by hand as =cvblock=s
+in the Publications section.
+
+That is not purely a workaround: =plain.bst=, the style moderncv's own
+BibTeX route would use, prints neither the =url= of the arXiv entry nor the
+=doi= of the WSC entry, so for two references the automated output would be
+strictly worse.
+
+If the list grows, the opt-in BibTeX route is:
+
+: \renewcommand*{\bibliographyitemlabel}{[\arabic{enumiv}]}   % preamble
+: \nocite{*}                                                  % section body
+: \bibliographystyle{unsrturl}
+: \bibliography{andy}
+
+=unsrturl= rather than =plain= — it ships with TeX Live and does print URLs.
+[[file:.latexmkrc][=.latexmkrc=]] already sets =$bibtex_use = 2= so that route needs no further
+changes.
+
+** Distinct class keys
+=add-to-list= does not replace an entry whose car already exists. The CV
+registers =moderncv= and the letter registers =moderncvletter= precisely so
+that export order within one Emacs session cannot matter. (This is a live
+latent bug in the altaCV pair, which share the key =altacv= with different
+preamble strings.) The shared part of the two preambles has to be kept in
+sync by hand.
+
+Corollary: *re-evaluating an edited config block does not update an
+already-registered class.* Restart Emacs, or =setq= =org-latex-classes= to
+drop the old entry first.
+
+** Icons
+moderncv 2.6.1's =moderncviconsawesome.sty= requires *fontawesome7*; older
+moderncv required *fontawesome5*. A class/font-package version mismatch is
+the single most likely first-build failure. Fallback: add
+=\moderncvicons{letters}= after =\moderncvstyle= — pure text, no font
+package at all.
+
+* Verification
+
+** Preflight
+
+#+begin_src sh
+  kpsewhich moderncv.cls
+  grep ProvidesClass "$(kpsewhich moderncv.cls)"          # expect 2.x
+  kpsewhich moderncvstyleclassic.sty moderncvbodyi.sty
+  kpsewhich fontawesome7.sty || kpsewhich fontawesome5.sty
+  kpsewhich tgpagella.sty
+#+end_src
+
+Missing =moderncv.cls= → =tlmgr install moderncv=. Missing both fontawesome
+→ use =\moderncvicons{letters}=. Missing =tgpagella= → =tlmgr install tex-gyre=,
+or swap in one of the alternatives listed in the preamble (=XCharter=,
+=libertinus=, =tgtermes=).
+
+** Static checks on the generated =.tex=
+Export to =.tex= only first — it is much faster to inspect than to compile.
+
+#+begin_src sh
+  grep -n 'documentclass'            CV_AndreasLoehr.tex   # [11pt,a4paper,sans]{moderncv}
+  grep -c 'hypersetup'               CV_AndreasLoehr.tex   # expect 0
+  grep -n '\\title{'                 CV_AndreasLoehr.tex   # exactly one, = your #+TITLE:
+  grep -n '\\begin{cvblock}'         CV_AndreasLoehr.tex   # \begin{cvblock}{11/2024 -- present}
+  grep -nE '\\begin\{(quote|figure|table|verse)\}' CV_AndreasLoehr.tex   # expect 0
+  grep -nE '\\section\[|\\section\*' CV_AndreasLoehr.tex   # expect 0
+  grep -n 'usepackage'               CV_AndreasLoehr.tex   # no second hyperref/graphicx
+#+end_src
+
+A =\begin{cvblock}=  with no =={...}== after it means the =#+ATTR_LATEX=
+line lost its attachment.
+
+** What a correct build looks like
+- Header: name in black upper-left, tagline (your =#+TITLE:=) beneath it in
+  PastelRed =#8F0D0D=, address / phone / email / GitHub / LinkedIn as a
+  right-aligned block with icons — moderncv =classic=. The whole document
+  is serif (TeX Gyre Pagella) with 1.2 cm side margins; the name is 24 pt,
+  not moderncv's stock ~38 pt.
+- Each section: a GoldenEarth =#E7D192= rule in the left hint column, then
+  the heading in DarkPastelRed =#450808=.
+- List bullets in DarkPastelRed (=\labelitemi= uses =\textcolor{color1}=) —
+  a quick way to confirm the colour override landed on the right side of
+  =\moderncvstyle=. Grey bullets mean the ordering broke.
+- *The check that matters*: in every entry the date sits right-aligned in
+  the ~2.8 cm left column, and *all* body text — prose *and* bullets — is
+  left-aligned in the main column, flush with the entry title. Bullets
+  running to the full page width mean =cvblock= is not being applied.
+- A long entry splits across a page boundary rather than jumping whole.
+- Cover letter: same header, recipient block, *a date* (check specifically —
+  a blank date means the body =\date{}= re-issue was lost), subject,
+  opening, body, closing, name, enclosures.
+- Log free of: =Undefined control sequence ... \hypersetup=,
+  =Environment quote undefined=, =Environment figure undefined=,
+  =Option clash for package hyperref=.
+
+* Troubleshooting
+
+| Symptom                                        | Cause                                        | Fix                                                       |
+|------------------------------------------------+----------------------------------------------+-----------------------------------------------------------|
+| =File moderncv.cls not found=                  | not installed                                | =tlmgr install moderncv=                                  |
+| =fontawesome7.sty not found=                   | moderncv newer than the font package         | =tlmgr update --all=, or =\moderncvicons{letters}=        |
+| Missing-argument error at a =cvblock=          | =#+ATTR_LATEX= separated from =#+begin_cvblock= | remove the blank line                                  |
+| Bullets at full page width                     | =cvblock= not applied                        | as above                                                  |
+| CV renders in grey, not red                    | =color0/1/2= overridden after =\moderncvstyle= | move the overrides above it                             |
+| =\hypersetup undefined=                        | hyperref template not suppressed             | =(setq org-latex-hyperref-template nil)=                  |
+| =Environment quote undefined= / mangled text   | an org =#+begin_quote= block                 | use =cvblock= or the header =\quote{...}=                 |
+| Blank date on the cover letter                 | org's preamble =\date{}= won                 | re-issue =\date{...}= in the body export block            |
+| Headlines appear as sections in the PDF        | =ox-extra= not active                        | the config block calls it — check it was evaluated        |
+| Config block edits have no effect              | class key already registered                 | restart Emacs, or =setq= =org-latex-classes= first        |
+| Nothing exported / prompt hangs in batch       | babel block never ran                        | =org-babel-execute-buffer= + =org-confirm-babel-evaluate= nil |
+| A size change in the Type scale block did nothing | the head style calls a different macro name | grep the installed =.sty= — see [[*Type scale][Type scale]] |
+| Everything still sans-serif                    | class option still =sans=                    | it must be =roman=; it wins over the font package  |
+
+* Open items
+
+- The address here is =Rückertstr. 34, 60314 Frankfurt am Main=, taken from
+  the newer =1.5-column-cv= files. [[file:../CV_Andreas_Loehr.md][=../CV_Andreas_Loehr.md=]] still says
+  =Freihofstr. 10, 63500 Seligenstadt=. One of the two is stale.
+- =Templates/= and the =.claude/skills/*= job-application pipeline still
+  produce altaCV documents. Wiring moderncv in as a selectable template is a
+  separate change.
+- Not verified: which moderncv release introduced the skill matrix
+  (=\cvskill=, =\cvskillentry=). If you want rating bars in the Skills
+  section, guard the call or check =kpsewhich moderncvskillmatrix.sty=.

@@ -1,0 +1,624 @@
+#+TITLE: ML Engineer & Part-time PhD Student in Reinforcement Learning
+* Config/Preamble :noexport:
+
+** LaTeX Config
+#+BEGIN_SRC emacs-lisp :exports none :results none :eval always
+  (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf")))
+
+  ;; :ignore: support, activated here rather than relying on init, so that a
+  ;; batch export behaves exactly like an interactive one.
+  (when (require 'ox-extra nil t)
+    (ox-extras-activate (quote (ignore-headlines))))
+
+  (add-to-list 'org-latex-classes
+               '("moderncv" "\\documentclass[10pt,a4paper,roman]{moderncv}
+
+  %% ------------------------------------------------------------------
+  %% Colours -- ORDER IS LOAD-BEARING
+  %% ------------------------------------------------------------------
+  % moderncv knows only color0 (body), color1 (primary accent) and color2
+  % (secondary accent). \\moderncvstyle then aliases the semantic names with
+  % \\colorlet{sectioncolor}{color1} and friends -- and \\colorlet SNAPSHOTS
+  % the value. So every override of color0/1/2 must sit BETWEEN
+  % \\moderncvcolor and \\moderncvstyle; overriding them afterwards silently
+  % does nothing and the CV comes out in the stock palette.
+  \\definecolor{SlateGrey}{HTML}{2E2E2E}
+  \\definecolor{LightGrey}{HTML}{666666}
+  \\definecolor{DarkPastelRed}{HTML}{450808}
+  \\definecolor{PastelRed}{HTML}{8F0D0D}
+  \\definecolor{GoldenEarth}{HTML}{E7D192}
+
+  \\moderncvcolor{grey}
+  \\colorlet{color0}{SlateGrey}
+  \\colorlet{color1}{DarkPastelRed}
+  \\colorlet{color2}{PastelRed}
+
+  \\moderncvstyle{classic}
+
+  % Fine tuning, after the style has aliased color0/1/2.
+  \\colorlet{firstnamecolor}{black}
+  \\colorlet{lastnamecolor}{black}
+  \\colorlet{namecolor}{black}
+  \\colorlet{titlecolor}{PastelRed}
+  \\colorlet{sectioncolor}{DarkPastelRed}
+  \\colorlet{subsectioncolor}{PastelRed}
+  \\colorlet{bodyrulecolor}{GoldenEarth}
+  \\colorlet{headrulecolor}{GoldenEarth}
+  \\colorlet{hintstylecolor}{LightGrey}
+  \\colorlet{addresscolor}{LightGrey}
+  \\colorlet{quotecolor}{SlateGrey}
+
+  %% ------------------------------------------------------------------
+  %% Fonts -- serif. TeX Gyre Pagella (a Palatino) ships with every TeX
+  %% Live install, the same argument ../1.5-column-cv makes for TeX Gyre
+  %% Heros. Alternatives, all pdflatex-safe:
+  %%   \\usepackage{XCharter}     % Charter -- tighter, more modern
+  %%   \\usepackage{libertinus}   % Linux Libertine
+  %%   \\usepackage{tgtermes}     % Times
+  %% The class option must stay roman for any of them: moderncv does
+  %% \\AtBeginDocument{\\renewcommand{\\familydefault}{\\rmdefault}}, which
+  %% overrides whatever the font package sets.
+  %% ------------------------------------------------------------------
+  \\usepackage{tgpagella}
+
+  %% ------------------------------------------------------------------
+  %% Type scale
+  %% ------------------------------------------------------------------
+  % moderncv's *style commands hardcode their sizes, so they are renewed
+  % outright rather than nudged. Two rules:
+  %   - these must come AFTER \\moderncvstyle, which is what installs the
+  %     originals;
+  %   - the \\providecommand + \\renewcommand pair is deliberate, so the
+  %     block is safe whether or not the installed moderncv defines that
+  %     particular name. A silent no-op means the head style calls a
+  %     differently named macro -- see the Type scale section of README.org.
+  \\providecommand*{\\firstnamestyle}[1]{}
+  \\renewcommand*{\\firstnamestyle}[1]{{\\fontsize{24}{27}\\selectfont\\color{firstnamecolor}#1}}
+  \\providecommand*{\\lastnamestyle}[1]{}
+  \\renewcommand*{\\lastnamestyle}[1]{{\\fontsize{24}{27}\\selectfont\\bfseries\\color{lastnamecolor}#1}}
+  \\providecommand*{\\titlestyle}[1]{}
+  \\renewcommand*{\\titlestyle}[1]{{\\normalsize\\slshape\\color{titlecolor}#1}}
+  \\providecommand*{\\addressstyle}[1]{}
+  \\renewcommand*{\\addressstyle}[1]{{\\footnotesize\\color{addresscolor}#1}}
+  \\providecommand*{\\quotestyle}[1]{}
+  \\renewcommand*{\\quotestyle}[1]{{\\small\\slshape\\color{quotecolor}#1}}
+  \\providecommand*{\\sectionstyle}[1]{}
+  \\renewcommand*{\\sectionstyle}[1]{{\\large\\bfseries\\color{sectioncolor}#1}}
+  \\providecommand*{\\subsectionstyle}[1]{}
+  \\renewcommand*{\\subsectionstyle}[1]{{\\normalsize\\bfseries\\color{subsectioncolor}#1}}
+  % The date column. cvblock below uses this too, so the two stay in step.
+  % The \\leavevmode is load-bearing, not cosmetic: \\color emits a whatsit,
+  % and at the start of the hint's box -- cvblock's \\parbox[t] label,
+  % \\cvitem's p-column cell -- TeX is still in vertical mode, so the whatsit
+  % lands on the box's vlist ahead of the first line. A \\parbox[t] takes its
+  % reference point from its first item, and a whatsit has height 0: the box
+  % comes out 0pt high with the entire hint line hanging below the shared
+  % baseline as depth (measured: 5.8pt too low in cvblock, 8.4pt in \\cvitem
+  % rows), so every date visibly sags under its headline. \\leavevmode starts
+  % the line first, the whatsit lands inside it, and the hint shares the
+  % body's baseline exactly.
+  \\providecommand*{\\hintstyle}[1]{}
+  \\renewcommand*{\\hintstyle}[1]{{\\leavevmode\\footnotesize\\color{hintstylecolor}#1}}
+
+  % Personal statement: moderncv centres it in a box of \\quotewidth, which
+  % defaults to 0.65\\textwidth. A plain \\setlength here is not enough:
+  % \\makecvhead calls \\recomputecvheadlengths on every run, which
+  % unconditionally resets \\quotewidth to 0.65\\textwidth again, silently
+  % undoing any earlier override. Appending to that macro instead means our
+  % value is set last, every time it runs.
+  \\makeatletter
+  \\@ifundefined{quotewidth}{}{\\g@addto@macro{\\recomputecvheadlengths}{\\setlength{\\quotewidth}{0.9\\textwidth}}}
+  \\makeatother
+
+  % moderncv also hardcodes a \\\\[2.5em] skip right after the quote box,
+  % inside \\makecvhead (moderncvheadi.sty). \\section already adds its own
+  % \\addvspace{2.5ex} before every heading, and \\addvspace collapses to
+  % whichever of the two is larger rather than summing them -- so whenever
+  % the quote's skip (2.5em, evaluated at the quote's own small font) is the
+  % bigger one, it wins outright and the gap before the first section ends
+  % up roughly double any other section-to-section gap. Patched via
+  % etoolbox to a value smaller than \\section's own request, so
+  % \\addvspace's normal collapsing takes over and this gap matches every
+  % other section gap in the document.
+  \\usepackage{etoolbox}
+  \\makeatletter
+  \\patchcmd{\\makecvhead}
+    {\\end{minipage}\\\\[2.5em]}
+    {\\end{minipage}\\\\[0pt]}
+    {}
+    {\\PackageWarning{cv}{Could not patch makecvhead quote spacing}}
+  \\makeatother
+
+  %% ------------------------------------------------------------------
+  %% Geometry
+  %% ------------------------------------------------------------------
+  \\usepackage[left=1.2cm,right=1.2cm,top=1.0cm,bottom=1.0cm]{geometry}
+  \\setlength{\\hintscolumnwidth}{2.8cm}
+
+  %% ------------------------------------------------------------------
+  %% cvblock -- an org-native replacement for \\cventry / \\cvitem
+  %% ------------------------------------------------------------------
+  % moderncv's \\cvitem{hint}{body} closes its own row, so org cannot splice a
+  % native -item list into it. cvblock instead OPENS the two columns and stays
+  % open, so everything org emits between \\begin{cvblock}{...} and
+  % \\end{cvblock} lands inside the main column.
+  %
+  % Built on a LaTeX list rather than moderncv's tabular/minipage pair,
+  % because a list breaks across pages and a minipage does not.
+  %
+  % Two moderncv internals are used below: \\hintscolumnwidth (documented
+  % API) and \\separatorcolumnwidth (not), so the latter is guarded. The
+  % hint is styled with \\hintstyle, renewed in the Type scale block above,
+  % so a cvblock date matches a \\cvitem hint exactly.
+  \\makeatletter
+  \\@ifundefined{separatorcolumnwidth}{%
+    \\newlength{\\separatorcolumnwidth}%
+    \\setlength{\\separatorcolumnwidth}{0.025\\textwidth}}{}
+  \\makeatother
+
+  \\newenvironment{cvblock}[1]{%
+    \\par\\addvspace{\\medskipamount}%
+    \\begingroup
+    \\small %two steps down from \\normalsize; \\hintstyle overrides
+            % its own label to \\footnotesize regardless, so the date
+            % column is unaffected by this.
+    \\begin{list}{}{%
+      \\setlength{\\labelwidth}{\\hintscolumnwidth}%
+      \\setlength{\\labelsep}{\\separatorcolumnwidth}%
+      \\setlength{\\leftmargin}{\\hintscolumnwidth}%
+      \\addtolength{\\leftmargin}{\\separatorcolumnwidth}%
+      \\setlength{\\rightmargin}{0pt}%
+      \\setlength{\\itemindent}{0pt}%
+      \\setlength{\\listparindent}{0pt}%
+      \\setlength{\\topsep}{0pt}%
+      \\setlength{\\partopsep}{0pt}%
+      \\setlength{\\itemsep}{0pt}%
+      \\setlength{\\parsep}{0.4\\baselineskip}%
+      \\renewcommand{\\makelabel}[1]{%
+        \\parbox[t]{\\labelwidth}{\\raggedleft\\hintstyle{##1}}}%
+    }%
+    \\item[#1]\\ignorespaces%
+  }{%
+    \\end{list}%
+    \\endgroup
+    \\par\\addvspace{\\medskipamount}%
+  }
+  "
+                 ("\\section{%s}" . "\\section{%s}")
+                 ("\\subsection{%s}" . "\\subsection{%s}")))
+
+  (setq org-latex-packages-alist 'nil)
+
+  ;; inputenc/fontenc carry the ("pdflatex") compiler restriction, so org drops
+  ;; them automatically under xelatex/lualatex -- matching moderncv's own
+  ;; \ifxetexorluatex branch. Dropped on purpose: graphicx and hyperref
+  ;; (moderncv requires both itself), longtable/wrapfig/rotating/capt-of (float
+  ;; machinery moderncv does not have -- it does not \LoadClass{article}),
+  ;; amsmath/amssymb/ulem (unused; re-add ("normalem" "ulem" t) if you want
+  ;; +strike-through+).
+  (setq org-latex-default-packages-alist
+        '(("AUTO" "inputenc" t ("pdflatex"))
+          ("T1"   "fontenc"  t ("pdflatex"))))
+
+  ;; moderncv loads hyperref from \AtEndPreamble, which etoolbox fires only
+  ;; when \begin{document} runs -- i.e. after every preamble line. Org writes
+  ;; \hypersetup{...} into the preamble, so it would be an undefined control
+  ;; sequence. nil suppresses the template entirely; moderncv sets pdfauthor,
+  ;; pdftitle and pdfsubject itself from \name and \title.
+  (setq org-latex-hyperref-template nil)
+
+  ;; Local override: build via latexmk but let the buffer's #+LATEX_COMPILER
+  ;; decide the engine. ox-latex expands %latex to that compiler, and
+  ;; -pdflatex=<program> is the latexmk flag that accepts any of
+  ;; pdflatex/xelatex/lualatex. A plain "latexmk -pdf ..." pins the run to
+  ;; pdflatex regardless of #+LATEX_COMPILER.
+  (setq org-latex-pdf-process
+        '("latexmk -f -pdf -pdflatex=%latex -interaction=nonstopmode -output-directory=%o %f"))
+#+END_SRC
+
+*** NOTE on architecture vs. the altacv setup
+altacv's =\cvevent= prints a header line inline into a flowing =paracol=
+column, so a following org paragraph or native =- item= list simply
+continues in the same column. That is why [[file:../org-resume/curriculum_AndreasLoehr.org][=org-resume/curriculum_AndreasLoehr.org=]]
+can be written in almost pure org.
+
+moderncv is different. =\cvitem{hint}{body}= and =\cventry{...}= build one
+self-contained two-column *row* per call: everything for the row has to sit
+inside the argument. A native org list written *after* a =\cventry= is no
+longer inside that argument, so it typesets at full page width, outside
+moderncv's main column, and the layout visibly breaks. This is the same
+constraint documented in [[file:../1.5-column-cv/cv-template.org][=1.5-column-cv/cv-template.org=]].
+
+*** NOTE on the cvblock environment
+=cvblock= is the way around that. Instead of a command that closes its own
+row, it is an *environment* that opens the hint column and the main column
+and leaves the main column open, so arbitrary org content — paragraphs,
+=- item= lists, =*bold*=, =/italic/=, links — is emitted inside it and lands
+in the right place. Usage:
+
+: #+ATTR_LATEX: :options {11/2024 -- present}
+: #+begin_cvblock
+: *Job Title*, Employer, /City/
+:
+: Prose.
+:
+: - a bullet
+: #+end_cvblock
+
+Two things to get right:
+
+1. The =#+ATTR_LATEX:= line must sit *immediately* above =#+begin_cvblock=
+   with no blank line between them, or the argument is dropped and the
+   build fails with a missing-argument error.
+2. The braces in =:options {...}= are required — =cvblock= takes one
+   mandatory argument, and =:options= is passed through to LaTeX verbatim.
+
+Because =:options= is verbatim, do not put =&=, =%= or =#= in a hint; write
+=\&=, =\%=, =\#=.
+
+=cvblock= is a LaTeX =list=, deliberately, rather than the tabular/minipage
+pair moderncv itself uses: a =list= breaks across a page boundary, a minipage
+does not, so a long entry flows onto the next page instead of being pushed
+there whole.
+
+*** NOTE on what stock org export breaks under moderncv
+moderncv does *not* =\LoadClass{article}=; it only inputs the size =.clo=
+file. Several things org emits by default therefore have nothing to land on:
+
+- =#+begin_quote= → =\begin{quote}=. moderncv defines =\quote{...}= as a
+  one-argument *command* for the header blurb, so the =quote= *environment*
+  does not exist and the block silently eats its first group instead of
+  erroring cleanly. Use a =cvblock= or plain emphasis. The header blurb is
+  the =\quote{...}= call in the CV Header block.
+- =#+CAPTION:= on an image or a table → =\begin{figure}= / =\begin{table}=
+  → undefined environment; moderncv has no float machinery. Uncaptioned
+  tables are fine (=center= + =tabular= are both in the LaTeX kernel).
+- =#+begin_verse= → undefined environment.
+- An =ALT_TITLE= property or a footnote in a headline makes org emit
+  =\section[alt]{title}=, which breaks moderncv's =\section= xparse
+  signature. Do not use either in this file.
+- Footnotes are listed in moderncv's =KNOWN_BUGS= as erroring; the output is
+  reportedly still correct under =-interaction=nonstopmode=.
+- =\hypersetup{...}=: org writes it into the *preamble*, but moderncv loads
+  hyperref from =\AtEndPreamble=, which only fires at =\begin{document}= —
+  so it would be an undefined control sequence. The LaTeX Config block sets
+  =org-latex-hyperref-template= to nil to suppress it; moderncv fills in
+  pdfauthor and pdftitle itself from =\name= and =\title=.
+- Org writes =\title{}=, =\author{}= and =\date{}= into the preamble
+  unconditionally — =#+OPTIONS: title:nil= suppresses only the title
+  *command*. moderncv =\renewcommand*=s both =\title= and =\date=, so
+  =#+TITLE:= at the top of this file *is* the tagline under the name, and
+  the cover letter has to re-issue =\date{...}= in the body because an
+  empty =\date{}= from org would otherwise blank moderncv's =\today=.
+
+*** NOTE on publications
+moderncv's own =KNOWN_BUGS= file lists it as incompatible with *biblatex*
+and with *biber* — which is precisely the toolchain the altacv CV uses
+(=\addbibresource= plus =\printbibliography=). That cannot be carried over
+here.
+
+The two entries in [[file:andy.bib][=andy.bib=]] are therefore written out by hand in the
+Publications section below. That is not purely a workaround: =plain.bst=,
+the style moderncv's own BibTeX route would use, prints neither the =url= of
+the arXiv entry nor the =doi= of the WSC entry, so for two references the
+automated output would be strictly worse than the hand-written one.
+
+If the list grows enough to be worth automating, the BibTeX route is:
+
+: \renewcommand*{\bibliographyitemlabel}{[\arabic{enumiv}]}   % in the preamble
+: \nocite{*}                                                  % in the section
+: \bibliographystyle{unsrturl}
+: \bibliography{andy}
+
+=unsrturl= rather than =plain=: it ships with TeX Live and does print URLs.
+=andy.bib= stays in this directory as the source of record either way.
+
+*** NOTE on colours (the ordering is load-bearing)
+moderncv exposes exactly three colours: =color0= (body), =color1= (primary
+accent) and =color2= (secondary accent). =\moderncvstyle= then aliases the
+semantic names off them — =\colorlet{sectioncolor}{color1}=,
+=\colorlet{bodyrulecolor}{color1}=, =\colorlet{titlecolor}{color2}= and so
+on. =\colorlet= *snapshots* the value at that moment.
+
+So the order in the preamble must be:
+
+: \moderncvcolor{grey}     →  override color0/1/2  →  \moderncvstyle{classic}
+
+Redefining =color1= *after* =\moderncvstyle= changes nothing about the
+section headings — it looks like it worked, and the CV comes out in moderncv's
+stock palette. Semantic names can still be overridden individually after the
+style, which is what the second block of =\colorlet=s in the preamble does.
+
+*** NOTE on compiler
+moderncv needs no =fontspec=, so unlike =1.5-column-cv= this builds fine
+with pdflatex, which is what =#+LATEX_COMPILER= below selects. The
+=org-latex-pdf-process= override above is kept anyway so that switching to
+xelatex or lualatex later is a one-line change; a hardcoded =latexmk -pdf=
+would silently ignore =#+LATEX_COMPILER=. Command-line builds are covered by
+[[file:.latexmkrc][=.latexmkrc=]] in this directory.
+
+#+LATEX_CLASS: moderncv
+#+LATEX_COMPILER: pdflatex
+
+** Exporter Settings
+# hyperref -- loaded by moderncv from \AtEndPreamble -- expands moderncv's pdf
+# metadata (pdfauthor = \@firstname{}~\@lastname{}, etc.) as \begin{document}
+# runs. \name, which defines those two macros, is called in the CV Header
+# block below, i.e. in the *body*: on hyperref versions that expand the
+# metadata at begin-document (e.g. 7.00u) they are still undefined there,
+# giving eight "Undefined control sequence" errors and an empty /Author in
+# the PDF. \title is unaffected -- org writes it into the preamble. Calling
+# \name here as well defines the macros in time; the body call re-sets the
+# identical values, so the rendered name is unchanged.
+#+LATEX_HEADER: \name{Andreas Loehr}{}
+#+AUTHOR: Andreas Loehr
+#+EXPORT_FILE_NAME: ./CV_AndreasLoehr.pdf
+#+OPTIONS: toc:nil title:nil author:nil date:nil H:2
+
+** Macros
+#+MACRO: cvitem \cvitem{$1}{$2}
+#+MACRO: cvlistitem \cvlistitem{$1}
+#+MACRO: newpage \newpage
+#+MACRO: bigskip \bigskip
+
+* CV Header :ignore:
+#+begin_export latex
+\name{Andreas Loehr}{} %{Loehr}
+% \title{} is NOT set here: org writes \title{} into the preamble from
+% #+TITLE: above, and moderncv \renewcommand*s \title to be the tagline.
+\address{Rückertstr. 34}{60314 Frankfurt am Main}{Germany}
+\phone[mobile]{+49~151~27243434}
+\email{andreas.loehr97@gmail.com}
+\social[github]{anloehr-1097}
+\social[linkedin]{andreas-loehr-486a52135}
+% \photo[64pt][0.4pt]{portrait}
+\vspace{-2cm}
+\quote{Mathematics-driven Software Engineer focused on Machine Learning and
+Reinforcement Learning. Experience integrating ML solutions into production
+systems, building distributed systems, and conducting applied research.}
+\makecvtitle
+\par
+#+end_export
+
+* Education
+** PhD Reinforcement Learning -- KIT :ignore:
+#+ATTR_LATEX: :options {08/2025 -- present}
+#+begin_cvblock
+*PhD Reinforcement Learning*, Karlsruher Institut für Technologie (KIT)
+
+Part-time PhD. Topics: Distributional Reinforcement Learning, Offline
+Reinforcement Learning. Drafting research proposal; active research group
+engagement.
+#+end_cvblock
+
+** M.Sc. Mathematics :ignore:
+#+ATTR_LATEX: :options {04/2022 -- 11/2024}
+#+begin_cvblock
+*M.Sc. Mathematics*, Goethe-University Frankfurt a.M. --- Grade 1.3
+
+Thesis: /Policy Evaluation in Distributional Reinforcement Learning/ (code on GitHub)
+
+- Specialization: Probability Theory (Stochastic Analysis, Advanced Stochastics, Financial Mathematics)
+- Electives: Numerical Mathematics, Functional Analysis
+- Minor: Computer Science (Algorithms & Data Structures, Machine Learning, Computer Networking & Distributed Systems)
+#+end_cvblock
+
+** B.Sc. Mathematics :ignore:
+#+ATTR_LATEX: :options {04/2019 -- 08/2022}
+#+begin_cvblock
+*B.Sc. Mathematics*, Goethe-University Frankfurt a.M. --- Grade 2.3
+
+Thesis: /Learning Using Statistical Invariants/ (code on GitHub)
+
+- Specialization: Probability Theory (Machine Learning, Stochastic Processes)
+- Electives: Algebraic Topology, Financial Mathematics
+- Minor: Computer Science (Functional Programming, Compilers, Databases)
+#+end_cvblock
+
+** Semester Abroad :ignore:
+#+ATTR_LATEX: :options {08/2018 -- 12/2018}
+#+begin_cvblock
+*Semester Abroad*, Singapore Management University
+
+Focus: Machine Learning, Quantitative Finance, Statistics, Programming.
+#+end_cvblock
+
+** B.Sc. Business Administration :ignore:
+#+ATTR_LATEX: :options {08/2016 -- 07/2019}
+#+begin_cvblock
+*B.Sc. Business Administration*, University of Mannheim --- Grade 2.2
+
+Business fundamentals, finance and management; studied concurrently with
+the mathematics programme.
+#+end_cvblock
+
+* Experience
+** Software Engineer -- ML @ SimPlan :ignore:
+#+ATTR_LATEX: :options {11/2024 -- present}
+#+begin_cvblock
+*Software Engineer -- Machine Learning*, SimPlan AG, /Hanau/
+
+Integrated custom Machine Learning solutions into the value stream modeling
+(VSM) software SimVSM.
+
+- *Value stream digitization via ML.* Iterated on the digitization backend built during the working student tenure: handled oversized panorama images via image preprocessing and made the system more robust by refactoring the backend onto task queues. Deployment as a Docker Compose stack, monitoring via Sentry, CI pipeline with unit tests (Python ~unittest~), infrastructure provisioning with Terraform / OpenTofu.
+- *Value stream modeling assistant via agentic AI.* Built and integrated an assistant based on agentic AI: evaluation pipeline, voice input via the Web Speech API and speech transcription models, and prototyping of promising directions for improvement. Built an integration test for agent evaluation and judgement with Jest, to allow future iteration on agent configuration, prompts and architecture.
+#+end_cvblock
+
+** Working Student Software Engineering @ SimPlan :ignore:
+#+ATTR_LATEX: :options {11/2022 -- 11/2024}
+#+begin_cvblock
+*Working Student -- Software Engineering*, SimPlan AG, /Hanau/
+
+Integrated custom Machine Learning solutions into the VSM software SimVSM.
+
+- Built a three-step pipeline --- object localization and detection, text detection (OCR) and edge detection --- to digitize analog value streams for use in SimVSM.
+- Crafted a custom backend to interface with the frontend application; ran data collection, image processing and model training for the object and text detection models.
+- Deployed the models with onnxruntime.
+#+end_cvblock
+
+** Student Worker, Prof. Dr. Matthias Kreck :ignore:
+#+ATTR_LATEX: :options {02/2022 -- 05/2022}
+#+begin_cvblock
+*Student Worker to Prof. Dr. Matthias Kreck*, Goethe-University Frankfurt
+
+Translated a tool by Prof. Dr. Erhard Scholz and Prof. Dr. Matthias Kreck,
+implementing a discrete time approach to modeling epidemics, from
+Mathematica to Python.
+#+end_cvblock
+
+** Working Student Risk Management @ Deloitte :ignore:
+#+ATTR_LATEX: :options {06/2019 -- 05/2021}
+#+begin_cvblock
+*Working Student -- Risk Management*, Deloitte Risk Advisory, Financial Risk Solutions, /Frankfurt/
+
+- *NII stress testing tool.* Designed and implemented an MS Access frontend in VBA for an MS SQL Server backend, including document upload and analysis, simulation checks and automatic translation of the tool. Interfaced the backend via ADOdb. Code documentation, unit and integration testing.
+- *Text mining applications.* Prototyped a Named Entity Recognition tool using transformers. Improved a duplicate detection tool for an organisational manual via regular expressions and different similarity measures. Image preprocessing and rule-based text mining on OCR-ed documents.
+#+end_cvblock
+
+** Internship Risk Management @ Deloitte :ignore:
+#+ATTR_LATEX: :options {01/2019 -- 03/2019}
+#+begin_cvblock
+*Internship -- Risk Management*, Deloitte Risk Advisory, Financial Risk Solutions, /Frankfurt/
+
+Image preprocessing with OpenCV to improve OCR results.
+#+end_cvblock
+
+* Projects
+** esp-32-home :ignore:
+#+ATTR_LATEX: :options {2026}
+#+begin_cvblock
+*Real-time Embedded Sensing on ESP32 via ESP-IDF* --- personal project, GitHub
+
+Low-level embedded C++ application for sensor data collection on a
+microcontroller, with a FreeRTOS-based architecture.
+
+- Task-based concurrency model (~WifiConnectTask~, ~Sht3xTask~, ~UpdateTask~, ~TimeSyncTask~) with queue-based sensor data flow and event group synchronization.
+- Direct hardware integration: I2C protocol handling, SHT31 sensor, NVS-based storage for credentials.
+- HTTP client for pushing real-time telemetry; designed for deterministic timing on an embedded platform.
+#+end_cvblock
+
+** onnx_websockets_pp :ignore:
+#+ATTR_LATEX: :options {2025}
+#+begin_cvblock
+*ONNX Model Inference & Serving in C++* --- personal project, GitHub
+
+Prototypical C++ inference server with AMQP message routing for deploying
+and serving machine learning models.
+
+- Exposed YOLOv11 object detection models via the onnxruntime C++ API and AMQP message routing.
+- ~OnnxInferLib~ abstraction layer over ONNX runtime inference, with image preprocessing and post-processing pipelines.
+- C++ GTest-based unit tests; Python client for result validation.
+#+end_cvblock
+
+** PyCppInterOpRL :ignore:
+#+ATTR_LATEX: :options {2025}
+#+begin_cvblock
+*Python/C++ Interop for RL with libtorch and pybind11* --- personal project, GitHub
+
+Bridged Python and C++ for performance-critical RL training using libtorch.
+
+- Exposed C++ RL primitives (policy network, replay buffer, transitions, training loop) to Python via pybind11 and the ~PYBIND11_MODULE~ macro.
+- CMake-based build linking Torch, torch_python, Eigen and pybind11; C++ test harness for validation.
+#+end_cvblock
+
+** More Projects :noexport:
+*** DistrRL_MonteCarlo :ignore:
+#+ATTR_LATEX: :options {2024}
+#+begin_cvblock
+*Master Thesis: Distributional RL Policy Evaluation* --- Goethe-University Frankfurt, GitHub
+
+Research implementation of distributional RL algorithms and Monte Carlo
+policy evaluation methods.
+
+- Implemented parametric and non-parametric RL algorithms with full unit test coverage.
+- Mathematical foundations: random variables, Wasserstein distances, grid CDF projections, analytical and numerical solutions.
+#+end_cvblock
+
+*** ML-Practice :ignore:
+#+ATTR_LATEX: :options {2025}
+#+begin_cvblock
+*Exploratory ML/RL Sandbox* --- personal project, GitHub
+
+Multi-track repository for hands-on ML experimentation across RL, deep
+learning and systems integration.
+
+- Classical RL algorithms (value functions, policy gradients, Monte Carlo methods).
+- VAE implementation in PyTorch; C++ example for cross-language exploration.
+- Experiments: CliffWalk solver, LunarLander RL training, first-visit Monte Carlo.
+#+end_cvblock
+
+* Skills
+#+begin_export latex
+{\small
+\cvitem{Programming}{Python (advanced, approx.~8 yrs), C/C++ (working), SQL (intermediate), TypeScript, R, VBA}
+\cvitem{Machine Learning}{PyTorch, JAX, ONNX Runtime, computer vision, model inference and serving, agentic AI}
+\cvitem{Embedded}{ESP32, ESP-IDF, FreeRTOS, microcontrollers, I2C, real-time systems}
+\cvitem{Backend \& Web}{FastAPI, uvicorn, REST APIs, reverse proxies, application-layer networking}
+\cvitem{Infrastructure}{Docker, Linux, Git, Bash, CI/CD (GitLab CI, Jenkins), Terraform / OpenTofu}
+\cvitem{Testing}{Python \texttt{unittest}, TypeScript Jest, first experience with GoogleTest}
+\cvitem{Tools}{Vim, Neovim, tmux, CMake, Make, MS Word, Excel, PowerPoint, Access}
+\cvitem{Ways of working}{Ticket-based workflow on a project board, agile development, work in a large TypeScript codebase}
+\par}
+#+end_export
+
+* Languages
+#+begin_export latex
+{/small
+\cvitemwithcomment{German}{Native}{}
+\cvitemwithcomment{English}{C1 --- full professional working proficiency}{Cambridge CAE, TOEFL 113}
+\cvitemwithcomment{Spanish}{B1 --- limited working proficiency}{}
+\cvitemwithcomment{Russian}{A1 --- elementary proficiency}{}
+\par}
+#+end_export
+
+* Publications
+** Agentic Insight Generation in VSM Simulations :ignore:
+#+ATTR_LATEX: :options {2026}
+#+begin_cvblock
+M. Selak, D. Krechel, A. Ulges, S. Spieckermann, N. Stoehr, *A. Loehr*.
+/Agentic Insight Generation in VSM Simulations/.
+arXiv:2604.12421 (cs.CL). https://arxiv.org/abs/2604.12421
+#+end_cvblock
+
+** LLM Assisted Value Stream Mapping :ignore:
+#+ATTR_LATEX: :options {2025}
+#+begin_cvblock
+M. Selak, D. Krechel, A. Ulges, S. Spieckermann, N. Stoehr, *A. Loehr*.
+/LLM Assisted Value Stream Mapping/. Proceedings of the 2025 Winter
+Simulation Conference, pp. 2015--2026. doi:10.1109/WSC68292.2025.11338928
+#+end_cvblock
+
+* Courses & Certifications :noexport:
+#+begin_export latex
+\cvitem{03/2019 -- 05/2019}{\textbf{Machine Learning} --- course certificate authorized by Stanford University, offered through Coursera}
+\cvitem{07/2018}{\textbf{The Python Mega Course: Build 10 Real World Applications} --- Udemy}
+\par
+#+end_export
+
+* Voluntary Work & Activities :noexport:
+** Thinc! e.V. :ignore:
+#+ATTR_LATEX: :options {2016 -- 2019}
+#+begin_cvblock
+*Head of Internal Matters* (2017--2018), Student Association Thinc! e.V.
+
+Topic: entrepreneurship. Maintained the organisation's webspace; contributed
+to the elaboration of long-term strategic goals of the association.
+#+end_cvblock
+
+** Q-Summit e.V. :ignore:
+#+ATTR_LATEX: :options {2016 -- 2019}
+#+begin_cvblock
+*Head of Speaker Relations* (2017--2018), Q-Summit an der Universität Mannheim e.V.
+
+Topics: entrepreneurship and innovation. Acquired new speakers; created and
+designed panel discussion and speaker concepts.
+#+end_cvblock
+
+* Interests
+#+begin_export latex
+{\small
+\cvitem{}{Embedded systems, real-time AI, microcontrollers, language learning,
+fitness \& nutrition, cooking \& fermentation.}
+\par}
+#+end_export
