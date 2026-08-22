@@ -73,9 +73,9 @@
   %     particular name. A silent no-op means the head style calls a
   %     differently named macro -- see the Type scale section of README.org.
   \\providecommand*{\\firstnamestyle}[1]{}
-  \\renewcommand*{\\firstnamestyle}[1]{{\\fontsize{24}{27}\\selectfont\\color{firstnamecolor}#1}}
+  \\renewcommand*{\\firstnamestyle}[1]{{\\fontsize{20}{23}\\selectfont\\color{firstnamecolor}#1}}
   \\providecommand*{\\lastnamestyle}[1]{}
-  \\renewcommand*{\\lastnamestyle}[1]{{\\fontsize{24}{27}\\selectfont\\bfseries\\color{lastnamecolor}#1}}
+  \\renewcommand*{\\lastnamestyle}[1]{{\\fontsize{20}{23}\\selectfont\\bfseries\\color{lastnamecolor}#1}}
   \\providecommand*{\\titlestyle}[1]{}
   \\renewcommand*{\\titlestyle}[1]{{\\normalsize\\slshape\\color{titlecolor}#1}}
   \\providecommand*{\\addressstyle}[1]{}
@@ -111,15 +111,17 @@
   \\makeatother
 
   % moderncv also hardcodes a \\\\[2.5em] skip right after the quote box,
-  % inside \\makecvhead (moderncvheadi.sty). \\section already adds its own
-  % \\addvspace{2.5ex} before every heading, and \\addvspace collapses to
-  % whichever of the two is larger rather than summing them -- so whenever
-  % the quote's skip (2.5em, evaluated at the quote's own small font) is the
-  % bigger one, it wins outright and the gap before the first section ends
-  % up roughly double any other section-to-section gap. Patched via
-  % etoolbox to a value smaller than \\section's own request, so
-  % \\addvspace's normal collapsing takes over and this gap matches every
-  % other section gap in the document.
+  % inside \\makecvhead (moderncvheadi.sty). \\section separately opens with
+  % its own \\par\\addvspace{2.5ex} before every heading. Per the kernel's
+  % actual \\@xaddvskip (latex.ltx): whenever the skip already in the
+  % vertical list is smaller than the requested amount -- true here for any
+  % value from this quote skip up to just under 2.5ex, whatever its sign --
+  % \\addvspace REPLACES it with exactly the requested 2.5ex, full stop. So
+  % nothing this skip is set to can bring the gap below \\section's own
+  % 2.5ex: 0pt just avoids wasting space beyond that floor, which is what
+  % every other section-to-section gap in the document measures anyway.
+  % Patched via etoolbox. (Pushing this one gap below that floor needs a
+  % different lever -- see the one-shot \\section patch further down.)
   \\usepackage{etoolbox}
   \\makeatletter
   \\patchcmd{\\makecvhead}
@@ -129,10 +131,46 @@
     {\\PackageWarning{cv}{Could not patch makecvhead quote spacing}}
   \\makeatother
 
+  % moderncv also hardcodes a SECOND, separate \\\\[2.5em] right before the
+  % quote box -- between the name/title block and the quote. It was sized to
+  % separate the quote from a two-line name+tagline block; now that the
+  % tagline is dropped, it sits directly under a single line and reads as an
+  % oversized gap immediately above the personal statement. Same
+  % \\@xaddvskip floor logic as above does not apply here -- there is no
+  % competing \\addvspace right after this one, so unlike the quote-to-
+  % section gap, this one really does shrink to whatever it's set to.
+  \\makeatletter
+  \\patchcmd{\\makecvhead}
+    {\\usebox{\\makecvheadnamebox}\\fi\\\\[2.5em]}
+    {\\usebox{\\makecvheadnamebox}\\fi\\\\[0.5em]}
+    {}
+    {\\PackageWarning{cv}{Could not patch makecvhead name-to-quote spacing}}
+  \\makeatother
+
+  % \\section's own \\addvspace{2.5ex} floor (see above) can't be sidestepped
+  % with a one-shot \\patchcmd the way \\makecvhead was: \\section here is an
+  % xparse \\RenewDocumentCommand, whose body isn't a plain macro replacement
+  % text -- \\show\\section resolves to an expl3 \\__cmd_start:nNNnnn wrapper,
+  % not literal tokens \\patchcmd can search-and-replace. Patching that
+  % safely needs xparse-aware tools this file doesn't otherwise depend on,
+  % for one skip value -- not worth the fragility. The remaining reduction
+  % instead comes from cvblock's own opening skip below, which shrinks the
+  % section-heading-to-first-entry gap (for every section, not just this
+  % one) rather than the quote-to-heading gap specifically.
+
   %% ------------------------------------------------------------------
   %% Geometry
   %% ------------------------------------------------------------------
-  \\usepackage[left=1.2cm,right=1.2cm,top=1.0cm,bottom=1.0cm]{geometry}
+  % bottom=1.0cm looked fine but silently killed the page-number footer: with
+  % too little room between the text body and the page edge, moderncv/
+  % fancyhdr's footer has nowhere to typeset and just drops it entirely --
+  % no warning, no visible clipping, it simply never renders (confirmed by
+  % isolating this margin alone in a minimal test document; bottom>=1.1cm is
+  % the technical threshold where it reappears at all, but right at that
+  % edge it lands ~1.6pt from the physical page edge -- on the page, but
+  % uncomfortably tight for any real viewer/printer. 1.4cm gives it actual
+  % room to breathe.
+  \\usepackage[left=1.2cm,right=1.2cm,top=1.0cm,bottom=1.4cm]{geometry}
   \\setlength{\\hintscolumnwidth}{2.8cm}
 
   %% ------------------------------------------------------------------
@@ -157,11 +195,19 @@
   \\makeatother
 
   \\newenvironment{cvblock}[1]{%
-    \\par\\addvspace{\\medskipamount}%
+    % Opening skip only, not the closing one below: \\addvspace never sums,
+    % it collapses to the larger of what it's asked for and whatever skip
+    % already precedes it. Between two cvblocks, that's this opening call
+    % competing against the PREVIOUS block's own closing \\smallskipamount,
+    % so shrinking only the opening here doesn't touch entry-to-entry
+    % spacing -- it only affects the one place this competes against
+    % something smaller instead: right after a \\section heading, quieting
+    % the section-heading-to-first-entry gap specifically.
+    \\par\\addvspace{0pt}%
     \\begingroup
-    \\small %two steps down from \\normalsize; \\hintstyle overrides
-            % its own label to \\footnotesize regardless, so the date
-            % column is unaffected by this.
+    \\small % one step down from \\normalsize; \\hintstyle overrides its own
+            % label to \\footnotesize regardless, so the date column is
+            % unaffected by this.
     \\begin{list}{}{%
       \\setlength{\\labelwidth}{\\hintscolumnwidth}%
       \\setlength{\\labelsep}{\\separatorcolumnwidth}%
@@ -173,7 +219,7 @@
       \\setlength{\\topsep}{0pt}%
       \\setlength{\\partopsep}{0pt}%
       \\setlength{\\itemsep}{0pt}%
-      \\setlength{\\parsep}{0.4\\baselineskip}%
+      \\setlength{\\parsep}{0.25\\baselineskip}%
       \\renewcommand{\\makelabel}[1]{%
         \\parbox[t]{\\labelwidth}{\\raggedleft\\hintstyle{##1}}}%
     }%
@@ -181,7 +227,7 @@
   }{%
     \\end{list}%
     \\endgroup
-    \\par\\addvspace{\\medskipamount}%
+    \\par\\addvspace{\\smallskipamount}%
   }
   "
                  ("\\section{%s}" . "\\section{%s}")
@@ -364,15 +410,20 @@ would silently ignore =#+LATEX_COMPILER=. Command-line builds are covered by
 * CV Header :ignore:
 #+begin_export latex
 \name{Andreas Loehr}{} %{Loehr}
-% \title{} is NOT set here: org writes \title{} into the preamble from
-% #+TITLE: above, and moderncv \renewcommand*s \title to be the tagline.
-\address{Rückertstr. 34}{60314 Frankfurt am Main}{Germany}
-\phone[mobile]{+49~151~27243434}
+% Org writes \title{...} into the preamble from #+TITLE: above (moderncv
+% \renewcommand*s \title to be the tagline under the name), and moderncv's
+% own \AtEndPreamble hook reads that value for the PDF's /Title metadata
+% at \begin{document} -- before this block runs. Re-issuing \title{} here,
+% empty, only resets \@title for the later \makecvhead call in this same
+% block, so the tagline is dropped from the rendered header while the PDF
+% metadata (still read from #+TITLE earlier) is untouched.
+\title{}
+\address{}{Frankfurt am Main}{Germany}
+%\phone[mobile]{+49~151~27243434}
 \email{andreas.loehr97@gmail.com}
 \social[github]{anloehr-1097}
-\social[linkedin]{andreas-loehr-486a52135}
+% \social[linkedin]{andreas-loehr-486a52135}
 % \photo[64pt][0.4pt]{portrait}
-\vspace{-2cm}
 \quote{Mathematics-driven Software Engineer focused on Machine Learning and
 Reinforcement Learning. Experience integrating ML solutions into production
 systems, building distributed systems, and conducting applied research.}
@@ -564,7 +615,7 @@ learning and systems integration.
 
 * Languages
 #+begin_export latex
-{/small
+{\small
 \cvitemwithcomment{German}{Native}{}
 \cvitemwithcomment{English}{C1 --- full professional working proficiency}{Cambridge CAE, TOEFL 113}
 \cvitemwithcomment{Spanish}{B1 --- limited working proficiency}{}
