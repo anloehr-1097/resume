@@ -1,0 +1,173 @@
+#+TITLE: ML Engineer & Part-time PhD Student in Reinforcement Learning
+* Config/Preamble :noexport:
+
+** LaTeX Config
+#+BEGIN_SRC emacs-lisp :exports none :results none :eval always
+  (setq org-latex-logfiles-extensions (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf")))
+
+  (when (require 'ox-extra nil t)
+    (ox-extras-activate (quote (ignore-headlines))))
+
+  (add-to-list 'org-latex-classes
+               '("moderncvletter" "\\documentclass[10pt,a4paper,roman]{moderncv}
+
+  %% ------------------------------------------------------------------
+  %% Colours -- kept identical to CV_AndreasLoehr.org so that the CV and
+  %% the letter read as one set of documents.
+  %% ORDER IS LOAD-BEARING: \\moderncvstyle aliases the semantic colour
+  %% names off color0/1/2 with \\colorlet, which snapshots the value, so
+  %% the overrides must sit between \\moderncvcolor and \\moderncvstyle.
+  %% ------------------------------------------------------------------
+  \\definecolor{SlateGrey}{HTML}{2E2E2E}
+  \\definecolor{LightGrey}{HTML}{666666}
+  \\definecolor{DarkPastelRed}{HTML}{450808}
+  \\definecolor{PastelRed}{HTML}{8F0D0D}
+  \\definecolor{GoldenEarth}{HTML}{E7D192}
+
+  \\moderncvcolor{grey}
+  \\colorlet{color0}{SlateGrey}
+  \\colorlet{color1}{DarkPastelRed}
+  \\colorlet{color2}{PastelRed}
+
+  \\moderncvstyle{classic}
+
+  \\colorlet{firstnamecolor}{black}
+  \\colorlet{lastnamecolor}{black}
+  \\colorlet{namecolor}{black}
+  \\colorlet{titlecolor}{PastelRed}
+  \\colorlet{sectioncolor}{DarkPastelRed}
+  \\colorlet{headrulecolor}{GoldenEarth}
+  \\colorlet{hintstylecolor}{LightGrey}
+  \\colorlet{addresscolor}{LightGrey}
+  \\colorlet{letterclosingcolor}{SlateGrey}
+
+  %% Fonts / type scale / geometry -- kept identical to CV_AndreasLoehr.org.
+  %% See that file's Type scale block for why these are renewed outright and
+  %% why they must sit after \\moderncvstyle.
+  \\usepackage{tgpagella}
+
+  \\providecommand*{\\firstnamestyle}[1]{}
+  \\renewcommand*{\\firstnamestyle}[1]{{\\fontsize{24}{27}\\selectfont\\color{firstnamecolor}#1}}
+  \\providecommand*{\\lastnamestyle}[1]{}
+  \\renewcommand*{\\lastnamestyle}[1]{{\\fontsize{24}{27}\\selectfont\\bfseries\\color{lastnamecolor}#1}}
+  \\providecommand*{\\titlestyle}[1]{}
+  \\renewcommand*{\\titlestyle}[1]{{\\normalsize\\slshape\\color{titlecolor}#1}}
+  \\providecommand*{\\addressstyle}[1]{}
+  \\renewcommand*{\\addressstyle}[1]{{\\footnotesize\\color{addresscolor}#1}}
+  \\providecommand*{\\hintstyle}[1]{}
+  \\renewcommand*{\\hintstyle}[1]{{\\footnotesize\\color{hintstylecolor}#1}}
+
+  \\usepackage[left=1.2cm,right=1.2cm,top=1.4cm,bottom=1.4cm]{geometry}
+  \\setlength{\\hintscolumnwidth}{2.8cm}
+
+  % For a German application, uncomment both. moderncv's KNOWN_BUGS names
+  % only *Spanish* babel as broken.
+  % \\usepackage[ngerman]{babel}
+  % \\renewcommand*{\\enclname}{Anlagen}
+  "
+                 ("\\section{%s}" . "\\section{%s}")
+                 ("\\subsection{%s}" . "\\subsection{%s}")))
+
+  (setq org-latex-packages-alist 'nil)
+  (setq org-latex-default-packages-alist
+        '(("AUTO" "inputenc" t ("pdflatex"))
+          ("T1"   "fontenc"  t ("pdflatex"))))
+
+  ;; moderncv loads hyperref from \AtEndPreamble, i.e. only at
+  ;; \begin{document}, so org's preamble \hypersetup{...} would be undefined.
+  (setq org-latex-hyperref-template nil)
+
+  (setq org-latex-pdf-process
+        '("latexmk -f -pdf -pdflatex=%latex -interaction=nonstopmode -output-directory=%o %f"))
+#+END_SRC
+
+*** NOTE on the class key
+This file registers =moderncvletter=, not =moderncv=, even though the
+preamble is the same minus the bibliography and the =cvblock= environment.
+=add-to-list= does *not* replace an entry whose car already exists, so if the
+letter reused the key =moderncv= then whichever of the two files was
+evaluated first in an Emacs session would silently supply the preamble for
+both. Distinct keys make the export order irrelevant. Keep the shared part
+of the two preambles in sync by hand when you change the style or colours.
+
+*** NOTE on the letter API
+moderncv 2.x needs no =letter= environment: =\makelettertitle= and
+=\makeletterclosing= are used bare inside =document=, with =\recipient=,
+=\opening=, =\closing= and =\enclosure= set beforehand. If your TeX Live is
+old enough to ship moderncv 1.x, wrap the body in
+=\begin{letter}{}= ... =\end{letter}=.
+
+The sender block comes from the same commands as the CV header
+(=\name=, =\address=, =\phone=, =\email=, =\social=), so those are repeated
+below rather than shared.
+
+Unlike the CV, the letter body needs no export blocks: it is flowing prose,
+not two-column rows, so plain org paragraphs, =*bold*=, =/italic/= and lists
+all export correctly.
+
+*** NOTE on language
+The scaffold below is English. For a German application, swap:
+
+| English                   | German                          |
+|---------------------------+---------------------------------|
+| =\opening{Dear Sir or Madam,}= | =\opening{Sehr geehrte Damen und Herren,}= |
+| =\closing{Yours faithfully,}=  | =\closing{Mit freundlichen Grüßen,}=       |
+| =\enclosure[Enclosures]{...}=  | =\enclosure[Anlagen]{Lebenslauf, Zeugnisse}= |
+
+and uncomment the =babel= / =\enclname= lines in the LaTeX Config block above.
+
+#+LATEX_CLASS: moderncvletter
+#+LATEX_COMPILER: pdflatex
+
+** Exporter Settings
+#+AUTHOR: Andreas Loehr
+# Same reason as in CV_AndreasLoehr.org: \name must be defined before
+# \begin{document} so hyperref's begin-document metadata expansion finds
+# \@firstname / \@lastname (moderncv's pdfauthor etc.). The body call in the
+# Letter Header below re-sets the identical values.
+#+LATEX_HEADER: \name{Andreas}{Loehr}
+#+EXPORT_FILE_NAME: ./CoverLetter_AndreasLoehr.pdf
+#+OPTIONS: toc:nil title:nil author:nil date:nil H:2
+
+* Letter Header :ignore:
+#+begin_export latex
+\name{Andreas}{Loehr}
+\address{Rückertstr. 34}{60314 Frankfurt am Main}{Germany}
+\phone[mobile]{+49~151~27243434}
+\email{andreas.loehr97@gmail.com}
+\social[github]{anloehr-1097}
+\social[linkedin]{andreas-loehr-486a52135}
+
+% TODO per application
+\recipient{Hiring Team}{Company AG\\Street 1\\12345 City}
+% Re-issued HERE on purpose: org writes \date{} into the preamble (
+% #+OPTIONS: date:nil), and an empty \date{} would blank moderncv's default
+% \today. \date is just a \def, so this later call wins.
+\date{\today}
+\opening{Dear Sir or Madam,}
+\closing{Yours faithfully,}
+\enclosure[Enclosures]{Curriculum Vitae, certificates}
+
+\makelettertitle
+\par
+#+end_export
+
+* Letter Body :ignore:
+TODO opening paragraph --- name the role and where it was found, and state in
+one sentence why this specific company and this specific position.
+
+TODO middle paragraph(s) --- the evidence. Pick the two or three items from
+the CV that map most directly onto the posting and say what was built,
+in what stack, with what result. Ground every claim in
+[[file:../CV_Andreas_Loehr.md][=CV_Andreas_Loehr.md=]]; see [[file:../AGENTS.md][=AGENTS.md=]] for what may and may not be claimed
+for a given role type.
+
+TODO closing paragraph --- availability, notice period, and a plain closing
+sentence. Address any gap the posting raises honestly rather than leaving it
+to be discovered at interview.
+
+* Letter Closing :ignore:
+#+begin_export latex
+\makeletterclosing
+\par
+#+end_export
