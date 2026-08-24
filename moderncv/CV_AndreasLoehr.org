@@ -536,6 +536,32 @@ Image preprocessing with OpenCV to improve OCR results.
 #+end_cvblock
 
 * Projects
+** DuoShotToAnki :ignore:
+#+ATTR_LATEX: :options {2026}
+#+begin_cvblock
+*Duolingo Screenshot to Anki Flashcard Service* --- personal project, GitHub
+
+Self-hosted C++17 web service that turns Duolingo exercise screenshots
+into ready-to-study Anki flashcards.
+
+- Multithreaded HTTP API (Crow) accepting screenshot uploads; calls the Google Gemini Flash API with structured outputs (libcurl, nlohmann/json) to extract concept, translation and card name.
+- Generates Emacs Org-mode flashcard snippets with Anki metadata, deduplicating against existing cards before appending.
+- Dockerized multi-stage build on Debian Bookworm; sorts uploaded images into date-based directories.
+#+end_cvblock
+
+** DoorMonitor :ignore:
+#+ATTR_LATEX: :options {2026}
+#+begin_cvblock
+*ESP32-S3 Door Monitoring Firmware with Edge Audio Classification* --- personal project, GitHub
+
+Embedded C++ firmware for an always-on home monitoring device, combining
+sensor fusion with on-device audio classification.
+
+- Reed and infrared sensors fused via producer-consumer tasks synchronized with binary semaphores; a ~SignalProcessor~ task pairs samples from ~SharedRingCtxt~ queues and evaluates them with ~SignalEvaluator~.
+- Custom ~RingBuffer~ / ~SharedRingContext~ components for task-safe data exchange, built with ESP-IDF and CMake.
+- Integrated an INMP441 I2S microphone to capture audio for on-device ML-based audio classification, e.g. detecting signs of intrusion.
+#+end_cvblock
+
 ** esp-32-home :ignore:
 #+ATTR_LATEX: :options {2026}
 #+begin_cvblock

@@ -23,15 +23,19 @@ Specialization: Probability Theory (Stochastic Analysis + Advanced Stochastics, 
 Further Electives: Numerical Mathematics, Functional Analysis  
 Minor: Computer Science (Algorithms & Datastructures, Machine Learning Seminar, Computer Networking & Distributed Systems)
 
+More coursework: Stochastical Numerical Analysis, Monte Carlo methods, Convex optimization, Linear Functional Analysis, Advanced Stochastics, Stochastic Models of Actuarial Theory, Stochastic Processes, Financial Mathematics, Continuous Time models, Financial Mathematics seminar on markov decision processes and optimal control in discrete time, seminar pattern analysis and machine intelligence.
+
 **B.Sc. Mathematics** — Goethe-University Frankfurt a.M. — Final Grade / GPA: 2.3 / 2.7  
 `04/2019 – 08/2022`  
 Specialization: Probability Theory (Machine Learning, Stochastic Processes and Stochastic Analysis)  
 Further Electives: Algebraic Topology, Financial Mathematics  
 Minor: Computer Science (Functional Programming, Compilers, Databases)
 
+More coursework: Machine Learning for Mathematicians, Stochastic Analysis, Seminar machine learning for mathematicians,  financial mathematics discrete time models, Algebraic Topology, Programming I, Programming paradigms and compiler construction, programming and databases, Complex Analysis and differential equations, integration theory, linear algebra I and II, Introduction to numerical analysis, stochastic Processes I, elementary probability theory, discrete mathematics, computational mathematics.
+
 **Semester Abroad** — Singapore Management University  
   * [ ] `08/2018 – 12/2018`  
-Specialization: Quantitative Finance, Statistics, Programming
+Specialization: Quantitative Finance, (Investment) Statistics, Programming
 
 **B.Sc. Business Administration** — University of Mannheim — Final Grade / GPA: 2.2 / 2.8  
 `08/2016 – 07/2019`
@@ -46,7 +50,7 @@ Specialization: Quantitative Finance, Statistics, Programming
 Integrated custom Machine Learning solutions into the value stream modeling (VSM) software SimVSM.
 
 **1. Value Stream Digitization via Machine Learning**  
-Iterated on the value stream digitization backend developed during working student tenure (see below). Features included handling oversized panorama images via image preprocessing and making the system more robust by refactoring the backend to use task queues. Deployment via Docker Compose stack, monitoring via Sentry. Set up CI pipeline to verify basic expected behavior with unit tests (python 'unittest' library). Also infrastructure provisioning using terraform / open-tofu
+Iterated on the value stream digitization backend developed during working student tenure (see below). Features included handling oversized panorama images via image preprocessing and making the system more robust by refactoring the backend to use task queues. Deployment via Docker Compose stack, monitoring via Sentry. Set up CI pipeline to verify basic expected behavior with unit tests (python 'unittest' library). Also infrastructure provisioning using terraform / open-tofu.
 
 **2. Value Stream Modeling Assistant via Agentic AI**  
 Built and integrated a value stream assistant based on **agentic AI**. Tasks included building an evaluation pipeline, integrating voice input using the Web Speech API and relevant speech transcription models, researching and prototyping promising directions for improvement of the assistant.
@@ -57,7 +61,7 @@ Used Jest unit test framework to build an integration test for the agent evaluat
 
 Integrated custom Machine Learning solutions into the value stream modeling (VSM) software SimVSM.
 
-- Built a three-step pipeline for object localization and detection, text detection (OCR) and edge detection to digitize analog value streams for use in SimVSM.
+- Built a three-step computer vision pipeline for object localization and detection, text detection (OCR) and edge detection to digitize analog value streams for use in SimVSM. Edge detection pipeline just integrated, not developed myself.
 - Tasks included crafting a custom backend to interface with the frontend application, data collection, image processing and model training of the object and text detection models.
 
 - Deployment of the Machine learning models with onnxruntime
@@ -117,20 +121,22 @@ Topics: Entrepreneurship & Innovation. Acquired new speakers; created and design
 
 ### Programming & Engineering
 
-- **Python** — Intermediate–advanced proficiency (~8 years); Data Science stack: Pandas, NumPy, Matplotlib
-- **Machine Learning Frameworks** — Working proficiency: PyTorch, JAX
+- **Python** — Intermediate–advanced proficiency (~8 years); Data Science stack: Pandas, NumPy, opencv
+- **Machine Learning Frameworks** — Working proficiency: PyTorch, JAX, some experience to Tensorflow 2 in Bachelor Thesis
 - **Python Web Apps** — FastAPI, uvicorn, 
-- **SQL** — Intermediate proficiency (~2 years), especially DML
-- **C/C++** — Working proficiency, actively polishing
+- **SQL** — Elementrary proficiency (~2 years on and off), especially DML
+- **C++** — Working proficiency, actively polishing
+- **C** — Intermediate proficiency, small projects developed in free time
 - **Git, Bash, Docker, Linux, Agentic AI** — Good working proficiency; working on the command line for the majority of time
 - **Terraform / Open-Tofu** initial exposure - created terraform infra as code for provisioning of production and staging system on VMs 
 - **Networking** — Basic understading of OSI layers, working proficiency of application layer including web servers, reverse proxies
 - **TypeScript** — Elementary proficiency
-- **R** — Elementary proficiency
-- **VBA** — Elementary proficiency in VBA for Excel and MS Access
+- **R** — Elementary proficiency, coursework, some programming at Deloitte's.
+- **VBA** — Elementary proficiency in VBA for Excel and MS Access, see one of the projects at Deloitte's
 - **CI/CD** — Working knowledge. Built some pipeline with Jenkins, also gitlab ci pipeline in one of the work projects
 - **Testing** — Working knowledge of python unittest library as well as typescript jest library, some first experience with Google Test for C++.
-- **Tools** — Vim, Nvim, tmux, some basic CMake and Make,
+- **Benchmarking** -- initial exposure to GoogleBench library, microbenchmarking for some small implementations.
+- **Tools** — Vim, Nvim, tmux, some basic CMake and Make, uv
 
 
 
@@ -143,6 +149,7 @@ Working proficiency: MS Word, MS Excel, MS PowerPoint, MS Access
 - Ticket based working model, coordination with other Software Engineers on project-board
 - work in large typescript codebase
 - agile development
+- Design patterns, both traditional and performance oriented (Array of Structures) 
 
 ---
 
@@ -150,11 +157,11 @@ Working proficiency: MS Word, MS Excel, MS PowerPoint, MS Access
 
 ### DoorMonitor (ESP32-S3 door monitoring firmware)
 
-- **Evidence (facts):** ESP32-S3 firmware built with ESP-IDF/CMake to monitor door events using reed and infrared sensors, with custom `RingBuffer` and `SharedRingContext` components for task-safe data exchange.
-- **What this demonstrates:** Embedded C++ development, sensor integration, task-based architecture, and low-level systems design for an always-on monitoring device.
+- **Evidence (facts):** ESP32-S3 firmware built with ESP-IDF/CMake to monitor door events using reed and infrared sensors, with custom `RingBuffer` and `SharedRingContext` components for task-safe data exchange. Used various synchronization primitives, esp. binary semaphores for producer-consumer synchronization. Sensor reading produces, sensor evaluator consumes, taking pairs (or potentially triples) of readings from different sensors and producing a signal. Already integrated an INMP microphone (I2S), and captured audio stream for on-device audio classification, what's missing here is the wiring and replacing the model with one spefically trained for this purpose. 
+- **What this demonstrates:** Embedded C++ development, sensor integration, task-based architecture, and low-level systems design for an always-on monitoring device. Edge Machine Learning, audio classification.
 - **Signal processing task:** A `SignalProcessor` task consumes from two `SharedRingCtxt<int>` queues, waits until both have data, pops paired samples in the same read cycle, and evaluates them with `SignalEvaluator<int>` before acting on the result.
-- **Inference:** Active development with a clear focus on predictable sensor timing and extensible future sensor support. **Confidence:** High.
-- Actively integrating microphone over I2S -> understood protocol at a certain level so that I can work with it
+- **Inference:** Active development with a clear focus on predictable sensor timing and extensible future sensor support.
+- Actively integrating microphone over I2S -> understood protocol at a certain level so that I can work with it, based on datasheet of mic and I2S protocol spec.
 - Idea: deploy tiny ML model on ESP-32 to process audio data in order to listen for human noises, signs of burglary / someone breaking into home
 
 ### esp-32-home (Home automation on ESP32, ESP-IDF, C++)
@@ -204,9 +211,11 @@ Working proficiency: MS Word, MS Excel, MS PowerPoint, MS Access
 - **Inference:** Early but meaningful foundation in translating academic ML concepts into executable codebases. **Confidence:** High.
 - **Uses Tensorflow** 
 
-### PyCppInterOpRL (Python/C++ interop for RL with libtorch + pybind11)
-   - Prototype bridging C++ RL components into Python via a pybind11 module (np_interop.cpp), exposing policy, replay buffer, transitions, and a training entrypoint.
-   - CMake build links libtorch/torch_python, Eigen, and pybind11
+### DuoShotToAnki (Duolingo screenshot to Anki flashcard service)
+
+- **Evidence (facts):** C++17 backend service (`src/`, CMake with FetchContent) exposing a `/process` HTTP endpoint via the Crow multithreaded web framework; accepts Duolingo exercise screenshots (PNG, multipart upload), calls the Google Gemini Flash API with structured outputs (via libcurl + nlohmann/json) to extract English concept, Russian translation, and a concise card name, then generates Emacs Org-mode flashcard snippets with Anki metadata. Deduplicates against existing `.org` files before appending new cards and sorts uploaded images into date-based directories. Dockerized with a multi-stage build on Debian Bookworm.
+- **What this demonstrates:** End-to-end C++ web service development (HTTP API, structured concurrency via a multithreaded framework), practical integration of an external LLM API with structured/schema-constrained outputs, and building a complete, self-hosted, real-world productivity tool from image ingestion to a usable study artifact.
+- **Inference:** Ability to independently ship a full-stack, containerized C++ backend integrating modern LLM tooling, beyond research/prototype code. **Confidence:** High.
 
 ### Cross-project strength synthesis (inference)
 
@@ -223,6 +232,8 @@ Working proficiency: MS Word, MS Excel, MS PowerPoint, MS Access
 
 Machine Learning, Programming, Mathematics, Microcontrollers, Russian Language, Sports, Nutrition, Photography & Nature, C++
 
+The general theme: Interested in translating Mathematical ideas into concrete algorithms, while taking into account the hardware. Acknowledgement that algorithms and mathematical reasoning are just one part of the equation. Translating it to software is another important part. However, abstracting away the hardware (as typically done with software) will in general lead to suboptimal performance. Thus implementations with mechanical sympathy are highly preferred. This intersection is exactly my point of interest. 
+
 ---
 
-*Frankfurt, 22.04.2026*
+*Frankfurt, 23.08.2026*

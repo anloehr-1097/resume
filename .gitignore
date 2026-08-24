@@ -10,4 +10,5 @@ Templates.bak/
 *.tex
 *.log
 *.pdf
-
+*.out
+*.aux

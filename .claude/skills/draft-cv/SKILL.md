@@ -1,6 +1,7 @@
 ---
 name: draft-cv
 description: Draft a job-specific CV from a template and the job description. Use when asked to create or adjust a CV for a specific job.
+argument-hint: [Optional[TemplateName]]
 ---
 
 ## What I do
@@ -8,7 +9,7 @@ Use this skill when extending an existing CV template in `Templates` into a job-
 
 Process:
 1. Read the job description first and extract required skills, responsibilities, and keywords.
-2. Choose which of the CV templates is most appropriate for the job. Copy this CV to the job specific folder.
+2. Choose which of the CV templates is most appropriate for the job. Copy this CV to the job specific folder. If one CV is specified as an argument, choose this specific CV.
 3. Reorder sections so the most relevant experience appears first.
 4. Rewrite project summaries to match the target role, but keep every claim grounded in the source material, esp. the `CV_Andreas_Loehr.md`
 5. Add or remove project entries only when they are supported by the source CV or direct repository evidence.
